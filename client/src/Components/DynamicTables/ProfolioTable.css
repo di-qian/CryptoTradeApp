@@ -1,0 +1,78 @@
+.stats {
+  flex: 0.3;
+  display: flex;
+  flex-direction: column;
+  padding: 0px 30px 30px 30px;
+}
+
+.stats__container {
+  flex-direction: column;
+  flex: 1;
+  background-color: #f5f7fa;
+  border-radius: 5px;
+  border: 1px solid #42494d;
+}
+
+.stats__header {
+  display: flex;
+  font-size: 16px;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #42494d;
+  padding: 20px 20px 10px 20px;
+  font-weight: bold;
+}
+
+.stats__content {
+  font-size: 13px;
+}
+
+.profoliorow {
+  display: flex;
+  justify-content: space-between;
+  height: 60px;
+  padding: 0 24px;
+  padding-top: 15px;
+
+  align-items: center;
+  border-bottom: 1px solid #42494d;
+  cursor: pointer;
+}
+
+.profoliorow:hover {
+  background-color: rgba(233, 224, 224, 0.932);
+}
+
+.row__intro > h1 {
+  font-size: 16px;
+  font-weight: bold;
+  padding-bottom: 0px;
+}
+
+.row__intro > p {
+  font-size: 12px;
+}
+
+.row__numbers {
+  text-align: end;
+  font-weight: 500;
+}
+
+.row__numbers > p {
+  font-size: 12px;
+  line-height: 0.3;
+}
+
+.row__price {
+  align-items: center;
+}
+
+.row__percentage_pos {
+  color: #5ac53b;
+  align-items: center;
+}
+
+.row__percentage_neg {
+  color: rgb(224, 8, 8);
+  align-items: center;
+}

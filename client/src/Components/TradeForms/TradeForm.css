@@ -1,0 +1,35 @@
+.TradeForm {
+  background-color: #fbfdfd;
+  /* text-align: left; */
+  padding: 1em;
+  margin: 1em;
+  border: 2px solid #d3d3d3;
+  border-radius: 0.5em;
+  vertical-align: middle;
+  margin-left: auto;
+  margin-right: auto;
+  width: 320px;
+  margin-top: 60px;
+}
+
+.form {
+  padding: 1em;
+}
+
+label {
+  display: flex;
+  font-weight: 350;
+}
+
+button {
+  justify-content: center;
+}
+
+.TradeForm-title {
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+.TradeForm-intro {
+  font-style: italic;
+}
