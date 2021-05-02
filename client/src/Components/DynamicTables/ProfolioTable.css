@@ -19,8 +19,15 @@
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid #42494d;
-  padding: 20px 20px 10px 20px;
+  padding: 20px 24px 10px 24px;
   font-weight: bold;
+}
+
+.stats__header.row__numbers {
+  text-align: end;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 0.3;
 }
 
 .stats__content {

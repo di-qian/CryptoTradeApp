@@ -28,7 +28,7 @@ const BuyForm = () => {
         </Form.Label>
         <hr />
 
-        <Form.Group as={Row} controlId="formTradeAmount">
+        <Form.Group as={Row} controlId="buyFormTradeAmount">
           <Form.Label column sm="6">
             Amount in USD
           </Form.Label>

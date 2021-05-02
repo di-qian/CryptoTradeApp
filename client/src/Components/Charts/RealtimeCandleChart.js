@@ -31,9 +31,16 @@ const RealtimeCandleChart = ({ crypto, baseData }) => {
     });
   };
 
-  //   useEffect(() => {
-  //     setInitData(baseData);
-  //   }, [baseData]);
+  useEffect(() => {
+    return () => {
+      if (crypto) {
+        const ticker_currency = crypto.ticker + '-' + crypto.currency;
+        const request_data = `{"action":"unsubscribe", "params":"XA.${ticker_currency}"}`;
+        ws.send(request_data);
+      }
+      ws.close();
+    };
+  }, []);
 
   useEffect(() => {
     ws.onopen = function (event) {

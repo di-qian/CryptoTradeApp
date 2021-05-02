@@ -4,15 +4,12 @@ import RealtimeCandleChart from './RealtimeCandleChart';
 import RealtimePriceTable from '../DynamicTables/RealtimePriceTable';
 import { useDispatch, useSelector } from 'react-redux';
 
-const RealtimeChart = () => {
+const RealtimeChart = ({ openPrice }) => {
   const cryptoListDetails = useSelector((state) => state.cryptoListDetails);
   const { loading, error, crypto } = cryptoListDetails;
-  const [query, setQuery] = useState('');
-  const [latestData, setLatestData] = useState([]);
 
-  let [initPrice, setInitPrice] = useState(0);
+  //let [initPrice, setInitPrice] = useState(0);
   let [initData, setInitData] = useState([]);
-  let [ticker, setTicker] = useState('');
 
   useEffect(() => {
     var now = new Date();
@@ -39,7 +36,7 @@ const RealtimeChart = () => {
         .then((data) => {
           let CurrData = [];
 
-          setInitPrice(Number(data.results[0].l));
+          //setInitPrice(Number(data.results[0].l));
 
           data.results.forEach((i) => {
             var dt = new Date(i.t);
@@ -63,7 +60,7 @@ const RealtimeChart = () => {
       <h2>{crypto && crypto.asset_name}</h2>
 
       {crypto ? (
-        <RealtimePriceTable ticker={crypto.ticker} openPrice={initPrice} />
+        <RealtimePriceTable ticker={crypto.ticker} openPrice={openPrice} />
       ) : (
         'Loading...'
       )}

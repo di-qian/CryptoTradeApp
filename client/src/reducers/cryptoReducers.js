@@ -5,6 +5,7 @@ const {
   CRYPTO_LIST_DETAILS_REQUEST,
   CRYPTO_LIST_DETAILS_SUCCESS,
   CRYPTO_LIST_DETAILS_FAIL,
+  CRYPTO_LIST_DETAILS_RESET,
 } = require('../constants/cryptoConstants');
 
 export const cryptoListReducer = (state = { cryptos: [] }, action) => {
@@ -34,6 +35,8 @@ export const cryptoListDetailsReducer = (state = { cryptos: [] }, action) => {
       };
     case CRYPTO_LIST_DETAILS_FAIL:
       return { loading: false, error: action.payload };
+    case CRYPTO_LIST_DETAILS_RESET:
+      return { cryptos: [] };
     default:
       return state;
   }

@@ -28,7 +28,7 @@ const SellForm = () => {
         </Form.Label>
         <hr />
 
-        <Form.Group as={Row} controlId="formTradeAmount">
+        <Form.Group as={Row} controlId="sellFormTradeAmount">
           <Form.Label column sm="6">
             Sell Amount in USD
           </Form.Label>
@@ -37,7 +37,7 @@ const SellForm = () => {
           </Col>
         </Form.Group>
 
-        <Form.Group as={Row} controlId="BidPrice">
+        <Form.Group as={Row} controlId="AskPrice">
           <Form.Label column sm="6">
             Sell Limited BTC Price
           </Form.Label>
