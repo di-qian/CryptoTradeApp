@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import RealtimeChart from '../Components/Charts/RealtimeCharts';
 import TradeForm from '../Components/TradeForms/TradeForm';
+import MyPosition from '../Components/DynamicTables/MyPosition';
 import { useDispatch, useSelector } from 'react-redux';
 import { listCryptos, listCryptosDetails } from '../actions/cryptoActions';
 import { CRYPTO_LIST_DETAILS_RESET } from '../constants/cryptoConstants';
@@ -12,6 +13,7 @@ const CryptoPage = ({ history, match }) => {
   const { loading, error, crypto } = cryptoListDetails;
   const userEmail = 'johndoe@gmail.com';
   const [openPrice, setOpenPrice] = useState({});
+  const [btcPrice, setBtcPrice] = useState({});
 
   useEffect(() => {
     dispatch(listCryptos());
@@ -20,6 +22,10 @@ const CryptoPage = ({ history, match }) => {
 
   useEffect(() => {
     setCryptoOpenPrice();
+    const interval = setInterval(() => {
+      getBtcPrice();
+    }, 1000);
+    return () => clearInterval(interval);
   }, [crypto]);
 
   useEffect(() => {
@@ -27,6 +33,25 @@ const CryptoPage = ({ history, match }) => {
       dispatch({ type: CRYPTO_LIST_DETAILS_RESET });
     };
   }, []);
+
+  const getBtcPrice = () => {
+    if (crypto) {
+      const jsonify = (res) => res.json();
+      const dataFetch = fetch(
+        `https://api.polygon.io/v1/last/crypto/${crypto.ticker}/USD?&` +
+          new URLSearchParams({
+            apiKey: process.env.REACT_APP_APIKEY,
+          })
+      )
+        .then(jsonify)
+        .then((data) => {
+          var temp_btcprice = Number(data.last.price);
+          var temp_btcprice_rounded = temp_btcprice.toFixed(2);
+
+          setBtcPrice({ p: temp_btcprice_rounded });
+        });
+    }
+  };
 
   const setCryptoOpenPrice = () => {
     var tempQuery = '';
@@ -61,10 +86,12 @@ const CryptoPage = ({ history, match }) => {
       <Container>
         <Row>
           <Col xs={12} md={8}>
-            <RealtimeChart openPrice={openPrice.o} />
+            <RealtimeChart cryptoPrice={btcPrice.p} openPrice={openPrice.o} />
           </Col>
           <Col xs={6} md={4}>
             <TradeForm />
+
+            <MyPosition cryptoPrice={btcPrice.p} openPrice={openPrice.o} />
           </Col>
         </Row>
       </Container>

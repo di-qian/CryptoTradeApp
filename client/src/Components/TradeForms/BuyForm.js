@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Container, Card, Nav, Form, Row, Col, Button } from 'react-bootstrap';
+import {
+  Container,
+  Card,
+  Nav,
+  Form,
+  Row,
+  Col,
+  Button,
+  Modal,
+} from 'react-bootstrap';
 import './TradeForm.css';
 import { listCryptos } from '../../actions/cryptoActions';
 
@@ -8,6 +17,8 @@ const BuyForm = () => {
   const dispatch = useDispatch();
   const cryptoList = useSelector((state) => state.cryptoList);
   const { loading, error, cryptos } = cryptoList;
+
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     //dispatch(listCryptos());
@@ -19,6 +30,20 @@ const BuyForm = () => {
     return cash[0];
   };
 
+  const settingResolvedAt = async () => {
+    // setResolvedAt(Date.now());
+    // await dispatch(updateBug('UPDATE_RESOLVEDAT', { ...bug, resolvedAt }));
+
+    // const combined_comment = 'assigned the task status to RESOLVED!';
+
+    // await dispatch(createBugComment(match.params.id, { combined_comment }));
+    // setIsConfirmMode(true);
+    handleClose();
+  };
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   return (
     <div>
       <Form>
@@ -26,7 +51,6 @@ const BuyForm = () => {
           Total purchase power $
           {retrieveCashInfo() && retrieveCashInfo().quantity}
         </Form.Label>
-        <hr />
 
         <Form.Group as={Row} controlId="buyFormTradeAmount">
           <Form.Label column sm="6">
@@ -46,14 +70,36 @@ const BuyForm = () => {
           </Col>
         </Form.Group>
         <br />
-        <Form.Group as={Row}>
+        <Form.Group as={Row} controlId="sumbits">
           <Col className="d-flex justify-content-center">
-            <Button variant="outline-info" type="submit" block>
+            <Button
+              variant="outline-info"
+              type="button"
+              block
+              onClick={() => handleShow()}
+            >
               Review Order
             </Button>
           </Col>
         </Form.Group>
       </Form>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Review Order</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Once confirmed, the form can no longer be edited!
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="success" onClick={settingResolvedAt}>
+            Confirm
+          </Button>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

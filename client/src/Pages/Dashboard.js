@@ -20,9 +20,10 @@ const Dashboard = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    setInterval(function () {
+    const interval = setInterval(() => {
       getCryptosPrice();
     }, 1000);
+    return () => clearInterval(interval);
   }, [cryptos]);
 
   const getCryptosPrice = () => {

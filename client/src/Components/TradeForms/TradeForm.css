@@ -31,5 +31,9 @@ button {
 }
 
 .TradeForm-intro {
-  font-style: italic;
+  font-size: 14px;
+  font-weight: 500;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e5e6e7;
 }

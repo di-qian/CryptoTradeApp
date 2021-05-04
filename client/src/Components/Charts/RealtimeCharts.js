@@ -4,7 +4,7 @@ import RealtimeCandleChart from './RealtimeCandleChart';
 import RealtimePriceTable from '../DynamicTables/RealtimePriceTable';
 import { useDispatch, useSelector } from 'react-redux';
 
-const RealtimeChart = ({ openPrice }) => {
+const RealtimeChart = ({ cryptoPrice, openPrice }) => {
   const cryptoListDetails = useSelector((state) => state.cryptoListDetails);
   const { loading, error, crypto } = cryptoListDetails;
 
@@ -60,7 +60,7 @@ const RealtimeChart = ({ openPrice }) => {
       <h2>{crypto && crypto.asset_name}</h2>
 
       {crypto ? (
-        <RealtimePriceTable ticker={crypto.ticker} openPrice={openPrice} />
+        <RealtimePriceTable cryptoPrice={cryptoPrice} openPrice={openPrice} />
       ) : (
         'Loading...'
       )}

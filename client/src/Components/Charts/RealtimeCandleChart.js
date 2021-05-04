@@ -72,7 +72,7 @@ const RealtimeCandleChart = ({ crypto, baseData }) => {
 
         setDataOut((curData) => [...curData, dataFr]);
       }
-      console.log(obj[0].ev === 'XA' ? dataOut : obj[0].message);
+      obj[0] && console.log(obj[0].ev === 'XA' ? dataOut : obj[0].message);
 
       return () => {
         ws.close();

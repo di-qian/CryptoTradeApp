@@ -4,47 +4,46 @@ import './RealtimePriceTable.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { listCryptosDetails } from '../../actions/cryptoActions';
 
-const RealtimePriceTable = ({ ticker, openPrice }) => {
-  const cryptoListDetails = useSelector((state) => state.cryptoListDetails);
-  const { loading, error, cryptos } = cryptoListDetails;
+const RealtimePriceTable = ({ cryptoPrice, openPrice }) => {
+  // const cryptoListDetails = useSelector((state) => state.cryptoListDetails);
+  // const { loading, error, cryptos } = cryptoListDetails;
 
-  const [btcPrice, setBtcPrice] = useState({});
+  // const [btcPrice, setBtcPrice] = useState({});
   const [priceDiff, setPriceDiff] = useState({});
   const [percentDiff, setPercentDiff] = useState({});
 
-  useEffect(() => {
-    console.log(ticker);
-    setInterval(function () {
-      getBtcPrice();
-    }, 1000);
-  }, []);
+  // useEffect(() => {
+  //   console.log(ticker);
+  //   setInterval(function () {
+  //     getBtcPrice();
+  //   }, 1000);
+  // }, []);
 
-  const getBtcPrice = () => {
-    const jsonify = (res) => res.json();
-    const dataFetch = fetch(
-      `https://api.polygon.io/v1/last/crypto/${ticker}/USD?&` +
-        new URLSearchParams({
-          apiKey: process.env.REACT_APP_APIKEY,
-        })
-    )
-      .then(jsonify)
-      .then((data) => {
-        // console.log(data);
-        var temp_btcprice = Number(data.last.price);
-        var temp_btcprice_rounded = temp_btcprice.toFixed(2);
+  // const getBtcPrice = () => {
+  //   const jsonify = (res) => res.json();
+  //   const dataFetch = fetch(
+  //     `https://api.polygon.io/v1/last/crypto/${ticker}/USD?&` +
+  //       new URLSearchParams({
+  //         apiKey: process.env.REACT_APP_APIKEY,
+  //       })
+  //   )
+  //     .then(jsonify)
+  //     .then((data) => {
+  //       var temp_btcprice = Number(data.last.price);
+  //       var temp_btcprice_rounded = temp_btcprice.toFixed(2);
 
-        setBtcPrice({ p: temp_btcprice_rounded });
-        getPriceDiff();
-        getPercentDiff();
-      });
-  };
+  //       setBtcPrice({ p: temp_btcprice_rounded });
+  //       getPriceDiff();
+  //       getPercentDiff();
+  //     });
+  // };
 
   const getPriceDiff = () => {
     let priceDiff;
     let priceDiffr;
 
-    if (openPrice && btcPrice.p) {
-      priceDiff = btcPrice.p - openPrice;
+    if (openPrice && cryptoPrice) {
+      priceDiff = cryptoPrice - openPrice;
       priceDiffr = priceDiff.toFixed(2);
     }
 
@@ -55,21 +54,18 @@ const RealtimePriceTable = ({ ticker, openPrice }) => {
     let percentDiff;
     let percentDiffr;
 
-    if (openPrice && btcPrice.p) {
-      percentDiff = ((btcPrice.p - openPrice) / openPrice) * 100;
+    if (openPrice && cryptoPrice) {
+      percentDiff = ((cryptoPrice - openPrice) / openPrice) * 100;
       percentDiffr = percentDiff.toFixed(2);
     }
 
     return percentDiffr;
   };
 
-  const printName = () => {
-    console.log(percentDiff);
-  };
   return (
     <div>
-      {btcPrice.p ? (
-        <h2>${btcPrice.p}</h2>
+      {cryptoPrice ? (
+        <h2>${cryptoPrice}</h2>
       ) : (
         <h2>
           <Spinner animation="grow" />
