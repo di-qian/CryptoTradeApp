@@ -4,11 +4,15 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import {
   cryptoListReducer,
   cryptoListDetailsReducer,
+  cryptoUpdateDetailsReducer,
+  cryptoUpdateReducer,
 } from './reducers/cryptoReducers';
 
 const reducer = combineReducers({
   cryptoList: cryptoListReducer,
   cryptoListDetails: cryptoListDetailsReducer,
+  cryptoUpdateDetails: cryptoUpdateDetailsReducer,
+  cryptoUpdate: cryptoUpdateReducer,
 });
 
 const middleware = [thunk];

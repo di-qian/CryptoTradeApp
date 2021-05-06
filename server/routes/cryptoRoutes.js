@@ -4,11 +4,12 @@ const {
   getAssets,
   getAssetsById,
   addAssetsById,
+  changeAssets,
   changeAssetsById,
   deleteAssetsById,
 } = require('../controllers/cryptoController');
 
-router.route('/').get(getAssets);
+router.route('/').get(getAssets).put(changeAssets);
 router
   .route('/:id')
   .get(getAssetsById)

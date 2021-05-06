@@ -5,7 +5,7 @@ import './TradeForm.css';
 import BuyForm from './BuyForm';
 import SellForm from './SellForm';
 
-const TradeForm = () => {
+const TradeForm = ({ cryptoPrice }) => {
   const [key, setKey] = useState('buy');
 
   return (
@@ -18,10 +18,10 @@ const TradeForm = () => {
           onSelect={(k) => setKey(k)}
         >
           <Tab eventKey="buy" title="Buy">
-            <BuyForm />
+            <BuyForm cryptoPrice={cryptoPrice} />
           </Tab>
           <Tab eventKey="sell" title="Sell">
-            <SellForm />
+            <SellForm cryptoPrice={cryptoPrice} />
           </Tab>
         </Tabs>
       </div>

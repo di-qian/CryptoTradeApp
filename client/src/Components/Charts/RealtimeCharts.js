@@ -38,16 +38,17 @@ const RealtimeChart = ({ cryptoPrice, openPrice }) => {
 
           //setInitPrice(Number(data.results[0].l));
 
-          data.results.forEach((i) => {
-            var dt = new Date(i.t);
-            dt.setMinutes(dt.getMinutes() + 1);
+          data &&
+            data.results.forEach((i) => {
+              var dt = new Date(i.t);
+              dt.setMinutes(dt.getMinutes() + 1);
 
-            CurrData.push({
-              x: dt,
-              y: [Number(i.o), Number(i.h), Number(i.l), Number(i.c)],
-              v: Number(i.v),
+              CurrData.push({
+                x: dt,
+                y: [Number(i.o), Number(i.h), Number(i.l), Number(i.c)],
+                v: Number(i.v),
+              });
             });
-          });
 
           setInitData(CurrData);
         });

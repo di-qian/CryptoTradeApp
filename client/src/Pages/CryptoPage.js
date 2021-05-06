@@ -11,6 +11,7 @@ const CryptoPage = ({ history, match }) => {
   const dispatch = useDispatch();
   const cryptoListDetails = useSelector((state) => state.cryptoListDetails);
   const { loading, error, crypto } = cryptoListDetails;
+
   const userEmail = 'johndoe@gmail.com';
   const [openPrice, setOpenPrice] = useState({});
   const [btcPrice, setBtcPrice] = useState({});
@@ -89,7 +90,7 @@ const CryptoPage = ({ history, match }) => {
             <RealtimeChart cryptoPrice={btcPrice.p} openPrice={openPrice.o} />
           </Col>
           <Col xs={6} md={4}>
-            <TradeForm />
+            <TradeForm cryptoPrice={btcPrice.p} />
 
             <MyPosition cryptoPrice={btcPrice.p} openPrice={openPrice.o} />
           </Col>
