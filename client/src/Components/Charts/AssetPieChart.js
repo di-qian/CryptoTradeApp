@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { CanvasJS, CanvasJSChart } from 'canvasjs-react-charts';
-import { useDispatch, useSelector } from 'react-redux';
+import { CanvasJSChart } from 'canvasjs-react-charts';
+import { useSelector } from 'react-redux';
 import { Spinner } from 'react-bootstrap';
+
 const AssetPieChart = (inLatestData) => {
-  const dispatch = useDispatch();
   const cryptoList = useSelector((state) => state.cryptoList);
-  const { loading, error, cryptos } = cryptoList;
+  const { cryptos } = cryptoList;
 
   const [curData, setCurData] = useState([]);
   const [AssetPieChartLoading, setAssetPieChartLoading] = useState(true);
@@ -16,9 +16,9 @@ const AssetPieChart = (inLatestData) => {
     retrieveAssetInfo();
   }, [inLatestData]);
 
-  const getCryptoCurPrice = (ticker, currency) => {
+  const getCryptoCurPrice = (ticker) => {
     if (curData.length > 0) {
-      var completeCryptoName = `X:${ticker}${currency}`;
+      var completeCryptoName = `X:${ticker}USD`;
       var curCrypto = curData.filter(
         (data) => data.ticker === completeCryptoName
       );
@@ -35,9 +35,9 @@ const AssetPieChart = (inLatestData) => {
 
   const retrieveAssetInfo = () => {
     var count = 0;
-    var regp = /[^0-9.-]+/g;
+
     var quantity = 0;
-    //var purchase_price;
+
     var curPrice = 0;
     var total_worth = 0;
     var total_worth_rounded = 0;
@@ -47,12 +47,12 @@ const AssetPieChart = (inLatestData) => {
 
     cryptos.map((crypto) => {
       quantity = Number(crypto.quantity);
-      //purchase_price = parseFloat(crypto.purchase_price.replace(regp, ''));
+
       curPrice =
-        crypto.asset_name === 'Cash'
+        crypto.asset_ticker === 'Cash'
           ? 1.0
-          : getCryptoCurPrice(crypto.ticker, crypto.currency) &&
-            getCryptoCurPrice(crypto.ticker, crypto.currency).p;
+          : getCryptoCurPrice(crypto.asset_ticker) &&
+            getCryptoCurPrice(crypto.asset_ticker).p;
 
       total_worth = quantity * curPrice;
       total_worth_rounded = total_worth.toFixed(2);

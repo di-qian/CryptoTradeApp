@@ -1,62 +1,109 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  Container,
-  Card,
-  Nav,
   Form,
   Row,
   Col,
   Button,
   Modal,
   Alert,
+  InputGroup,
+  FormControl,
 } from 'react-bootstrap';
+import { ToastContainer, toast } from 'react-toastify';
 import './TradeForm.css';
 import {
   listCryptos,
   listCryptosDetails,
   updateCryptosDetails,
   updateCryptos,
+  deleteCrypto,
 } from '../../actions/cryptoActions';
 import {
   CRYPTO_UPDATE_DETAILS_RESET,
   CRYPTO_UPDATE_RESET,
+  CRYPTO_DELETE_RESET,
 } from '../../constants/cryptoConstants';
 
-const SellForm = ({ cryptoPrice }) => {
+const SellForm = (props) => {
+  const { cryptoPrice, cryptoTickers, sellorderStatusToast } = props;
   const dispatch = useDispatch();
   const cryptoList = useSelector((state) => state.cryptoList);
   const { cryptos } = cryptoList;
   const cryptoListDetails = useSelector((state) => state.cryptoListDetails);
   const { loading, error, crypto } = cryptoListDetails;
   const cryptoUpdateDetails = useSelector((state) => state.cryptoUpdateDetails);
-  const { detail_update_success } = cryptoUpdateDetails;
+  const {
+    detail_update_success,
+    error: detail_update_fail,
+  } = cryptoUpdateDetails;
   const cryptoUpdate = useSelector((state) => state.cryptoUpdate);
-  const { cryptos_update_success } = cryptoUpdate;
+  const { cryptos_update_success, error: cryptos_update_fail } = cryptoUpdate;
+
+  const cryptoDelete = useSelector((state) => state.cryptoAdd);
+  const {
+    success: crypto_delete_success,
+    error: crypto_delete_fail,
+  } = cryptoDelete;
 
   const [show, setShow] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
+
   const [sellAmount, setSellAmount] = useState(0);
 
   useEffect(() => {
     if (detail_update_success && cryptos_update_success) {
-      setShowAlert(true);
-
+      sellorderStatusToast('Sell Order Completed!');
       dispatch({ type: CRYPTO_UPDATE_DETAILS_RESET });
       dispatch({ type: CRYPTO_UPDATE_RESET });
     }
-  }, [detail_update_success, cryptos_update_success]);
+
+    if (detail_update_fail || cryptos_update_fail) {
+      sellorderStatusToast('Sell Order Failed!');
+      dispatch({ type: CRYPTO_UPDATE_DETAILS_RESET });
+      dispatch({ type: CRYPTO_UPDATE_RESET });
+    }
+  }, [
+    detail_update_success,
+    cryptos_update_success,
+    detail_update_fail,
+    cryptos_update_fail,
+  ]);
 
   useEffect(() => {
-    return () => {
-      setShowAlert(false);
-    };
+    if (crypto_delete_success) {
+      sellorderStatusToast('Sell Order Completed!');
+      dispatch({ type: CRYPTO_DELETE_RESET });
+    }
+
+    if (crypto_delete_fail) {
+      sellorderStatusToast('Sell Order Failed!');
+      dispatch({ type: CRYPTO_DELETE_RESET });
+    }
+  }, [crypto_delete_success, crypto_delete_fail]);
+
+  useEffect(() => {
+    return () => {};
   }, []);
 
   const retrieveCashInfo = () => {
     const cashinfo = cryptos.filter((crypto) => crypto.asset_name === 'Cash');
 
     return cashinfo[0];
+  };
+
+  const deleteCryptoFromDatabase = async () => {
+    const user_email = 'johndoe@gmail.com';
+    await dispatch(
+      deleteCrypto(cryptoTickers.base_currency_symbol, user_email)
+    );
+
+    await dispatch(
+      listCryptosDetails(cryptoTickers.base_currency_symbol, user_email)
+    );
+
+    updateCash();
+
+    handleClose();
   };
 
   const updateCryptoDetail = async () => {
@@ -79,20 +126,22 @@ const SellForm = ({ cryptoPrice }) => {
       updateCryptosDetails({ ...crypto, quantity, purchase_price })
     );
 
-    var cash = retrieveCashInfo().quantity + +sell_quantity;
+    dispatch(listCryptosDetails(crypto.asset_ticker, crypto.owner_email));
+
+    updateCash();
+    handleClose();
+  };
+
+  const updateCash = async () => {
+    var sell_quantity = sellAmount * cryptoPrice;
+    var cash = Number(retrieveCashInfo().quantity) + +sell_quantity;
+    console.log(sell_quantity);
+    console.log(cash);
     const owner_email = 'johndoe@gmail.com';
     const asset_name = 'Cash';
 
     await dispatch(updateCryptos(owner_email, asset_name, cash));
-
-    dispatch(listCryptosDetails(crypto.ticker, crypto.owner_email));
     dispatch(listCryptos());
-    handleClose();
-  };
-
-  const enterSellAmount = (e) => {
-    setSellAmount(e);
-    setShowAlert(false);
   };
 
   const handleClose = () => setShow(false);
@@ -102,29 +151,41 @@ const SellForm = ({ cryptoPrice }) => {
     <div>
       <Form>
         <Form.Label className="TradeForm-intro">
-          Total purchase power $
-          {retrieveCashInfo() && retrieveCashInfo().quantity}
+          Total cash available $
+          {retrieveCashInfo() && retrieveCashInfo().quantity.toFixed(2)}
         </Form.Label>
-        <hr />
 
         <Form.Group as={Row} controlId="sellFormTradeAmount">
-          <Form.Label column sm="6">
-            Sell Amount In Crypto
+          <Form.Label column sm="4">
+            Sell Quantity:
           </Form.Label>
-          <Col sm="6">
-            <Form.Control
-              placeholder="$0.00"
-              value={sellAmount}
-              onChange={(e) => enterSellAmount(e.target.value)}
-            />
+          <Col sm="8">
+            <InputGroup>
+              <FormControl
+                autoComplete="off"
+                placeholder="0"
+                value={sellAmount}
+                onChange={(e) => setSellAmount(e.target.value)}
+              />
+
+              <InputGroup.Append>
+                <Button
+                  className="button_SellAll"
+                  variant="link"
+                  onClick={() => setSellAmount(crypto.quantity)}
+                >
+                  Sell All
+                </Button>
+              </InputGroup.Append>
+            </InputGroup>
           </Col>
         </Form.Group>
 
         <Form.Group as={Row} controlId="EstSellPrice">
-          <Form.Label column sm="6">
-            {crypto && crypto.ticker} Ask Price
+          <Form.Label column sm="4">
+            {crypto && crypto.asset_ticker} Ask Price:
           </Form.Label>
-          <Col sm="6">
+          <Col sm="8">
             <Form.Control
               placeholder="$0.00"
               value={`$${cryptoPrice}`}
@@ -134,10 +195,10 @@ const SellForm = ({ cryptoPrice }) => {
         </Form.Group>
 
         <Form.Group as={Row} controlId="EstSellQuantity">
-          <Form.Label column sm="6">
-            Est Amount in USD
+          <Form.Label column sm="4">
+            Est $ Total:
           </Form.Label>
-          <Col sm="6">
+          <Col sm="8">
             <Form.Control
               placeholder="$0.00"
               value={'$' + (sellAmount * cryptoPrice).toFixed(2)}
@@ -151,18 +212,6 @@ const SellForm = ({ cryptoPrice }) => {
         >
           Insufficient Crypto
         </Alert>
-
-        {showAlert && (
-          <Alert
-            variant={'success'}
-            dismissible
-            transition
-            show={showAlert}
-            onClose={() => setShowAlert(false)}
-          >
-            Sell Order Completed
-          </Alert>
-        )}
 
         <Form.Group as={Row} controlId="sumbits">
           <Col className="d-flex justify-content-center">
@@ -185,7 +234,7 @@ const SellForm = ({ cryptoPrice }) => {
         </Modal.Header>
         <Modal.Body>
           <p>
-            Sell Amount In Crypto: {sellAmount} {crypto && crypto.ticker}
+            Sell Amount In Crypto: {sellAmount} {crypto && crypto.asset_ticker}
           </p>
           <p>Market Price: ${cryptoPrice}</p>
           <p>
@@ -194,7 +243,14 @@ const SellForm = ({ cryptoPrice }) => {
           </p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="success" onClick={updateCryptoDetail}>
+          <Button
+            variant="success"
+            onClick={
+              sellAmount === crypto.quantity
+                ? deleteCryptoFromDatabase
+                : updateCryptoDetail
+            }
+          >
             Place Order
           </Button>
           <Button variant="secondary" onClick={handleClose}>

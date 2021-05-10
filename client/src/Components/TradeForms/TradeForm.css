@@ -25,6 +25,11 @@ button {
   justify-content: center;
 }
 
+.button_SellAll {
+  font-size: 13px;
+  text-align: right;
+}
+
 .TradeForm-title {
   font-size: 1.2em;
   font-weight: 600;

@@ -15,11 +15,34 @@ const CryptoPage = ({ history, match }) => {
   const userEmail = 'johndoe@gmail.com';
   const [openPrice, setOpenPrice] = useState({});
   const [btcPrice, setBtcPrice] = useState({});
+  const [tickers, setTickers] = useState({});
 
   useEffect(() => {
     dispatch(listCryptos());
-    dispatch(listCryptosDetails(match.params.id, userEmail));
-  }, [dispatch]);
+    const ticker = 'X:' + match.params.id + 'USD';
+    const jsonify = (res) => res.json();
+    const results = fetch(
+      `https://api.polygon.io/v3/reference/tickers?ticker=${ticker}&market=crypto&active=true&sort=ticker&order=asc&limit=1000&` +
+        new URLSearchParams({
+          apiKey: process.env.REACT_APP_APIKEY,
+        })
+    )
+      .then(jsonify)
+      .then((data) => {
+        console.log(data);
+        processTickerData(data.results[0]);
+      });
+  }, [dispatch, match.params.id]);
+
+  const processTickerData = (currencyData) => {
+    let processData = {
+      base_currency_symbol: currencyData.base_currency_symbol,
+      base_currency_name: currencyData.base_currency_name,
+    };
+
+    dispatch(listCryptosDetails(processData.base_currency_symbol, userEmail));
+    setTickers(processData);
+  };
 
   useEffect(() => {
     setCryptoOpenPrice();
@@ -36,41 +59,37 @@ const CryptoPage = ({ history, match }) => {
   }, []);
 
   const getBtcPrice = () => {
-    if (crypto) {
-      const jsonify = (res) => res.json();
-      const dataFetch = fetch(
-        `https://api.polygon.io/v1/last/crypto/${crypto.ticker}/USD?&` +
-          new URLSearchParams({
-            apiKey: process.env.REACT_APP_APIKEY,
-          })
-      )
-        .then(jsonify)
-        .then((data) => {
-          var temp_btcprice = Number(data.last.price);
-          var temp_btcprice_rounded = temp_btcprice.toFixed(2);
+    const jsonify = (res) => res.json();
+    const dataFetch = fetch(
+      `https://api.polygon.io/v1/last/crypto/${match.params.id}/USD?&` +
+        new URLSearchParams({
+          apiKey: process.env.REACT_APP_APIKEY,
+        })
+    )
+      .then(jsonify)
+      .then((data) => {
+        var temp_btcprice = Number(data.last.price);
 
-          setBtcPrice({ p: temp_btcprice_rounded });
-        });
-    }
+        setBtcPrice({ p: temp_btcprice });
+      });
   };
 
   const setCryptoOpenPrice = () => {
     var tempQuery = '';
-    if (crypto) {
-      tempQuery = tempQuery + 'X:' + crypto.ticker + crypto.currency;
 
-      const jsonify = (res) => res.json();
-      const dataFetch = fetch(
-        `https://api.polygon.io/v2/snapshot/locale/global/markets/crypto/tickers?tickers=${tempQuery}&` +
-          new URLSearchParams({
-            apiKey: process.env.REACT_APP_APIKEY,
-          })
-      )
-        .then(jsonify)
-        .then((data) => {
-          processCurrData(data.tickers);
-        });
-    }
+    tempQuery = tempQuery + 'X:' + match.params.id + 'USD';
+
+    const jsonify = (res) => res.json();
+    const dataFetch = fetch(
+      `https://api.polygon.io/v2/snapshot/locale/global/markets/crypto/tickers?tickers=${tempQuery}&` +
+        new URLSearchParams({
+          apiKey: process.env.REACT_APP_APIKEY,
+        })
+    )
+      .then(jsonify)
+      .then((data) => {
+        processCurrData(data.tickers);
+      });
   };
 
   const processCurrData = (curr_DataSet) => {
@@ -87,10 +106,14 @@ const CryptoPage = ({ history, match }) => {
       <Container>
         <Row>
           <Col xs={12} md={8}>
-            <RealtimeChart cryptoPrice={btcPrice.p} openPrice={openPrice.o} />
+            <RealtimeChart
+              cryptoPrice={btcPrice.p}
+              openPrice={openPrice.o}
+              cryptoTickers={tickers}
+            />
           </Col>
           <Col xs={6} md={4}>
-            <TradeForm cryptoPrice={btcPrice.p} />
+            <TradeForm cryptoPrice={btcPrice.p} cryptoTickers={tickers} />
 
             <MyPosition cryptoPrice={btcPrice.p} openPrice={openPrice.o} />
           </Col>

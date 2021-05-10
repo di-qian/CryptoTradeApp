@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CanvasJS, CanvasJSChart } from 'canvasjs-react-charts';
+import { CanvasJSChart } from 'canvasjs-react-charts';
 
 const AssetBalanceChart = () => {
   const [dataP, setDataP] = useState([]);

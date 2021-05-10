@@ -19,20 +19,20 @@ const ProfolioTableRow = (props) => {
       <div className="profoliorow">
         <div className="row__intro">
           <h1>{props?.name}</h1>
-          <p>
+          <span>
             {worth ? (
               props.volume && props.volume + ' shares ($' + worth + ')'
             ) : (
               <Spinner animation="border" size="sm" variant="dark" />
             )}
-          </p>
+          </span>
         </div>
 
         <div className="row__numbers">
           <p className="row__price">
             {props.price ? '$' + props.price.toFixed(2) : ''}
           </p>
-          <p
+          <span
             className={
               percentage >= 0 ? 'row__percentage_pos' : 'row__percentage_neg'
             }
@@ -43,7 +43,7 @@ const ProfolioTableRow = (props) => {
             ) : (
               <Spinner animation="border" size="sm" variant="dark" />
             )}
-          </p>
+          </span>
           <p
             className={
               percentage >= 0 ? 'row__percentage_pos' : 'row__percentage_neg'

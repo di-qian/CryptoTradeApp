@@ -14,6 +14,14 @@ const {
   CRYPTO_UPDATE_SUCCESS,
   CRYPTO_UPDATE_FAIL,
   CRYPTO_UPDATE_RESET,
+  CRYPTO_CREATE_REQUEST,
+  CRYPTO_CREATE_SUCCESS,
+  CRYPTO_CREATE_FAIL,
+  CRYPTO_CREATE_RESET,
+  CRYPTO_DELETE_REQUEST,
+  CRYPTO_DELETE_SUCCESS,
+  CRYPTO_DELETE_FAIL,
+  CRYPTO_DELETE_RESET,
 } = require('../constants/cryptoConstants');
 
 export const cryptoListReducer = (state = { cryptos: [] }, action) => {
@@ -83,6 +91,36 @@ export const cryptoUpdateReducer = (state = { cryptos: {} }, action) => {
       return { loading: false, error: action.payload };
     case CRYPTO_UPDATE_RESET:
       return { cryptos: {} };
+    default:
+      return state;
+  }
+};
+
+export const cryptoAddReducer = (state = {}, action) => {
+  switch (action.type) {
+    case CRYPTO_CREATE_REQUEST:
+      return { loading: true };
+    case CRYPTO_CREATE_SUCCESS:
+      return { loading: false, success: true, crypto: action.payload };
+    case CRYPTO_CREATE_FAIL:
+      return { loading: false, error: action.payload };
+    case CRYPTO_CREATE_RESET:
+      return {};
+    default:
+      return state;
+  }
+};
+
+export const cryptoDeleteReducer = (state = {}, action) => {
+  switch (action.type) {
+    case CRYPTO_DELETE_REQUEST:
+      return { loading: true };
+    case CRYPTO_DELETE_SUCCESS:
+      return { loading: false, success: true };
+    case CRYPTO_DELETE_FAIL:
+      return { loading: false, error: action.payload };
+    case CRYPTO_DELETE_RESET:
+      return {};
     default:
       return state;
   }

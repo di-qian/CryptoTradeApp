@@ -1,0 +1,33 @@
+.search-bar-dropdown {
+  width: 15.8em;
+  /* text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column; */
+}
+
+.drop-down-item {
+  font-size: small;
+  width: 21.4em;
+}
+
+.drop-down-overflow {
+  max-height: 309px;
+  margin-bottom: 10px;
+  overflow: scroll;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.drop-down-item .currency_symbol {
+  font-weight: 650;
+  color: gray;
+  float: left;
+}
+
+.drop-down-item .currency_name {
+  position: absolute;
+  left: 8em;
+}

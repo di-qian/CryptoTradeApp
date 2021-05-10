@@ -28,6 +28,14 @@
   padding-left: 50px;
 }
 
+.vertical-center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
 .navbar-logo {
   color: rgb(3, 2, 2);
   justify-self: start;
@@ -48,7 +56,7 @@
   justify-content: center;
   list-style: none;
   text-align: center;
-  justify-content: end;
+  justify-content: flex-end;
 }
 
 .nav-item {
@@ -56,9 +64,9 @@
   border-bottom: 2px solid transparent;
 }
 
-.nav-item:hover {
+/* .nav-item:hover {
   border-bottom: 2px solid #f00946;
-}
+} */
 
 .nav-links {
   color: rgb(3, 2, 2);

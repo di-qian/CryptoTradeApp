@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import CanvasJSReact from './canvasjs.stock.react';
-var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSStockChart = CanvasJSReact.CanvasJSStockChart;
 
 const RealtimeCandleChart = ({ crypto, baseData }) => {
@@ -17,37 +16,18 @@ const RealtimeCandleChart = ({ crypto, baseData }) => {
   var yVal;
   var vVal;
 
-  //console.log(isLoaded);
-
-  const setInitData = (inBaseData) => {
-    inBaseData.forEach((i) => {
-      xVal = i.x;
-      let dps = { x: xVal, y: i.y };
-      let dpv = { x: xVal, y: i.v };
-      setDatapoint1((currentData) => [...currentData, dps]);
-      setDatapoint2((currentData) => [...currentData, dpv]);
-
-      setIsLoaded(true);
-    });
-  };
-
   useEffect(() => {
-    return () => {
-      if (crypto) {
-        const ticker_currency = crypto.ticker + '-' + crypto.currency;
-        const request_data = `{"action":"unsubscribe", "params":"XA.${ticker_currency}"}`;
-        ws.send(request_data);
-      }
-      ws.close();
-    };
-  }, []);
+    setIsLoaded(false);
+    setDatapoint1([]);
+    setDatapoint1([]);
+    setDataOut([]);
+    setRangeChangedTriggered(false);
 
-  useEffect(() => {
     ws.onopen = function (event) {
       const auth_data = `{"action":"auth","params":"${process.env.REACT_APP_APIKEY}"}`;
       ws.send(auth_data);
       if (crypto) {
-        const ticker_currency = crypto.ticker + '-' + crypto.currency;
+        const ticker_currency = crypto.asset_ticker + '-' + 'USD';
         const request_data = `{"action":"subscribe", "params":"XA.${ticker_currency}"}`;
         ws.send(request_data);
       }
@@ -78,7 +58,16 @@ const RealtimeCandleChart = ({ crypto, baseData }) => {
         ws.close();
       };
     };
-  }, []);
+    return () => {
+      if (crypto) {
+        console.log('candlestick chart websocket unmounted');
+        const ticker_currency = crypto.asset_ticker + '-' + 'USD';
+        const request_data = `{"action":"unsubscribe", "params":"XA.${ticker_currency}"}`;
+        ws.send(request_data);
+      }
+      ws.close();
+    };
+  }, [crypto]);
 
   useEffect(() => {
     if (!isLoaded) {
@@ -86,7 +75,19 @@ const RealtimeCandleChart = ({ crypto, baseData }) => {
     }
 
     updateChart(dataOut);
-  }, [baseData, dataOut]);
+  }, [crypto, baseData, dataOut]);
+
+  const setInitData = (inBaseData) => {
+    inBaseData.forEach((i) => {
+      xVal = i.x;
+      let dps = { x: xVal, y: i.y };
+      let dpv = { x: xVal, y: i.v };
+      setDatapoint1((currentData) => [...currentData, dps]);
+      setDatapoint2((currentData) => [...currentData, dpv]);
+
+      setIsLoaded(true);
+    });
+  };
 
   const updateChart = (inData) => {
     if (Object.keys(inData).length > 0) {

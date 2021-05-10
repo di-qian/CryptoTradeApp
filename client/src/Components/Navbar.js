@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.css';
+import SearchBar from './SearchBar';
 
 const NavBar = () => {
   const [click, setClick] = useState(false);
 
   const handleClick = () => setClick(!click);
-  const closeMobileMenu = () => setClick(false);
 
   return (
     <>
       <div className="navbar">
-        <div className="navbar-container container-fluid">
+        <div className="navbar-container container-fluid vertical-center">
           <Link to="/" className="navbar-logo">
             <i className="fas fa-rocket navbar-icon" />
             IntelliTrade
@@ -24,6 +24,9 @@ const NavBar = () => {
             )}
           </div>
           <ul className={click ? 'nav-menu active' : 'nav-menu'}>
+            <li className="nav-item">
+              <SearchBar />
+            </li>
             <li className="nav-item">
               <Link to="/" className="nav-links">
                 Deposit

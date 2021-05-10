@@ -1,55 +1,84 @@
 import React, { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  Container,
-  Card,
-  Nav,
-  Form,
-  Row,
-  Col,
-  Button,
-  Modal,
-  Alert,
-} from 'react-bootstrap';
+import { Form, Row, Col, Button, Modal, Alert } from 'react-bootstrap';
 import './TradeForm.css';
 import {
   listCryptos,
   listCryptosDetails,
   updateCryptosDetails,
   updateCryptos,
+  addCrypto,
 } from '../../actions/cryptoActions';
 import {
   CRYPTO_UPDATE_DETAILS_RESET,
   CRYPTO_UPDATE_RESET,
+  CRYPTO_CREATE_RESET,
 } from '../../constants/cryptoConstants';
 
-const BuyForm = ({ cryptoPrice }) => {
+const BuyForm = (props) => {
+  const { cryptoPrice, cryptoTickers, buyorderStatusToast } = props;
   const dispatch = useDispatch();
   const cryptoList = useSelector((state) => state.cryptoList);
   const { cryptos } = cryptoList;
   const cryptoListDetails = useSelector((state) => state.cryptoListDetails);
-  const { loading, error, crypto } = cryptoListDetails;
+  const { crypto } = cryptoListDetails;
   const cryptoUpdateDetails = useSelector((state) => state.cryptoUpdateDetails);
-  const { detail_update_success } = cryptoUpdateDetails;
+  const {
+    detail_update_success,
+    error: detail_update_fail,
+  } = cryptoUpdateDetails;
   const cryptoUpdate = useSelector((state) => state.cryptoUpdate);
-  const { cryptos_update_success } = cryptoUpdate;
+  const { cryptos_update_success, error: cryptos_update_fail } = cryptoUpdate;
+
+  const cryptoAdd = useSelector((state) => state.cryptoAdd);
+  const { success: crypto_add_success, error: crypto_add_fail } = cryptoAdd;
 
   const [show, setShow] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
+
   const [buyAmount, setBuyAmount] = useState(0);
 
   useEffect(() => {
-    if (detail_update_success && cryptos_update_success) {
-      setShowAlert(true);
+    setBuyAmount(0);
+  }, [crypto]);
 
+  useEffect(() => {
+    if (detail_update_success && cryptos_update_success) {
+      buyorderStatusToast('Buy Order Completed!');
+      //toast.success('Buy Order Completed!');
       dispatch({ type: CRYPTO_UPDATE_DETAILS_RESET });
       dispatch({ type: CRYPTO_UPDATE_RESET });
     }
-  }, [detail_update_success, cryptos_update_success]);
+
+    if (detail_update_fail || cryptos_update_fail) {
+      buyorderStatusToast('Buy Order Failed!');
+      dispatch({ type: CRYPTO_UPDATE_DETAILS_RESET });
+      dispatch({ type: CRYPTO_UPDATE_RESET });
+    }
+  }, [
+    detail_update_success,
+    cryptos_update_success,
+    detail_update_fail,
+    cryptos_update_fail,
+  ]);
+
+  useEffect(() => {
+    if (crypto_add_success) {
+      buyorderStatusToast('Buy Order Completed!');
+      //toast.success('Buy Order Completed!');
+      dispatch({ type: CRYPTO_CREATE_RESET });
+    }
+
+    if (crypto_add_fail) {
+      buyorderStatusToast('Buy Order Failed!');
+      //toast.error('Buy Order Failed!');
+      dispatch({ type: CRYPTO_CREATE_RESET });
+    }
+  }, [crypto_add_success, crypto_add_fail]);
 
   useEffect(() => {
     return () => {
-      setShowAlert(false);
+      //
     };
   }, []);
 
@@ -57,6 +86,23 @@ const BuyForm = ({ cryptoPrice }) => {
     const cashinfo = cryptos.filter((crypto) => crypto.asset_name === 'Cash');
 
     return cashinfo[0];
+  };
+
+  const addCryptoToDatabase = async () => {
+    let newCrypto = {
+      owner_email: 'johndoe@gmail.com',
+      asset_name: cryptoTickers.base_currency_name,
+      quantity: buyAmount / cryptoPrice,
+      purchase_price: cryptoPrice,
+      asset_ticker: cryptoTickers.base_currency_symbol,
+    };
+    await dispatch(addCrypto(newCrypto));
+
+    await dispatch(listCryptosDetails(crypto.asset_ticker, crypto.owner_email));
+
+    updateCash();
+
+    handleClose();
   };
 
   const updateCryptoDetail = async () => {
@@ -78,20 +124,20 @@ const BuyForm = ({ cryptoPrice }) => {
       updateCryptosDetails({ ...crypto, quantity, purchase_price })
     );
 
+    dispatch(listCryptosDetails(crypto.asset_ticker, crypto.owner_email));
+
+    updateCash();
+
+    handleClose();
+  };
+
+  const updateCash = async () => {
     var cash = retrieveCashInfo().quantity - buyAmount;
     const owner_email = 'johndoe@gmail.com';
     const asset_name = 'Cash';
 
     await dispatch(updateCryptos(owner_email, asset_name, cash));
-
-    dispatch(listCryptosDetails(crypto.ticker, crypto.owner_email));
     dispatch(listCryptos());
-    handleClose();
-  };
-
-  const enterBuyAmount = (e) => {
-    setBuyAmount(e);
-    setShowAlert(false);
   };
 
   const handleClose = () => setShow(false);
@@ -102,27 +148,28 @@ const BuyForm = ({ cryptoPrice }) => {
       <Form>
         <Form.Label className="TradeForm-intro">
           Total cash available $
-          {retrieveCashInfo() && retrieveCashInfo().quantity}
+          {retrieveCashInfo() && retrieveCashInfo().quantity.toFixed(2)}
         </Form.Label>
 
         <Form.Group as={Row} controlId="buyFormTradeAmount">
           <Form.Label column sm="6">
-            Amount in USD
+            Amount in USD ($):
           </Form.Label>
           <Col sm="6">
             <Form.Control
+              autoComplete="off"
               placeholder="$0.00"
               value={buyAmount}
-              onChange={(e) => enterBuyAmount(e.target.value)}
+              onChange={(e) => setBuyAmount(e.target.value)}
             />
           </Col>
         </Form.Group>
 
         <Form.Group as={Row} controlId="EstBuyPrice">
-          <Form.Label column sm="6">
-            {crypto && crypto.ticker} Bid Price
+          <Form.Label column sm="4">
+            {crypto && crypto.asset_ticker} Bid Price:
           </Form.Label>
-          <Col sm="6">
+          <Col sm="8">
             <Form.Control
               placeholder="$0.00"
               value={`$${cryptoPrice}`}
@@ -132,10 +179,10 @@ const BuyForm = ({ cryptoPrice }) => {
         </Form.Group>
 
         <Form.Group as={Row} controlId="EstBuyQuantity">
-          <Form.Label column sm="6">
-            Est {crypto && crypto.ticker}
+          <Form.Label column sm="4">
+            Est {crypto && crypto.asset_ticker}:
           </Form.Label>
-          <Col sm="6">
+          <Col sm="8">
             <Form.Control
               placeholder="$0.00"
               value={(buyAmount / cryptoPrice).toFixed(8)}
@@ -154,18 +201,6 @@ const BuyForm = ({ cryptoPrice }) => {
         >
           Insufficient fund
         </Alert>
-
-        {showAlert && (
-          <Alert
-            variant={'success'}
-            dismissible
-            transition
-            show={showAlert}
-            onClose={() => setShowAlert(false)}
-          >
-            Buy Order Completed
-          </Alert>
-        )}
 
         <Form.Group as={Row} controlId="sumbits">
           <Col className="d-flex justify-content-center">
@@ -191,12 +226,19 @@ const BuyForm = ({ cryptoPrice }) => {
           <p>Market price ${cryptoPrice}</p>
           <p>
             {' '}
-            Estimated {crypto && crypto.ticker} (QTY) :{' '}
+            Estimated {crypto && crypto.asset_ticker} (QTY) :{' '}
             {(buyAmount / cryptoPrice).toFixed(8)}
           </p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="success" onClick={updateCryptoDetail}>
+          <Button
+            variant="success"
+            onClick={
+              crypto && !crypto.not_own
+                ? updateCryptoDetail
+                : addCryptoToDatabase
+            }
+          >
             Place Order
           </Button>
           <Button variant="secondary" onClick={handleClose}>

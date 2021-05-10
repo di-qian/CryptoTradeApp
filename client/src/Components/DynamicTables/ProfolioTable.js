@@ -14,9 +14,9 @@ const ProfolioTable = (inLatestData) => {
     setCurData(inLatestData.latestData);
   }, [inLatestData]);
 
-  const getCryptoOpeningPrice = (ticker, currency) => {
+  const getCryptoOpeningPrice = (ticker) => {
     if (curData.length > 0) {
-      var completeCryptoName = `X:${ticker}${currency}`;
+      var completeCryptoName = `X:${ticker}USD`;
       var curCrypto = curData.filter(
         (data) => data.ticker === completeCryptoName
       );
@@ -71,15 +71,14 @@ const ProfolioTable = (inLatestData) => {
                     key={crypto.id}
                     name={crypto.asset_name}
                     openPrice={
-                      getCryptoOpeningPrice(crypto.ticker, crypto.currency) &&
-                      getCryptoOpeningPrice(crypto.ticker, crypto.currency).o
+                      getCryptoOpeningPrice(crypto.asset_ticker) &&
+                      getCryptoOpeningPrice(crypto.asset_ticker).o
                     }
                     volume={crypto.quantity}
-                    ticker={crypto.ticker}
-                    currency={crypto.currency}
+                    ticker={crypto.asset_ticker}
                     price={
-                      getCryptoOpeningPrice(crypto.ticker, crypto.currency) &&
-                      getCryptoOpeningPrice(crypto.ticker, crypto.currency).p
+                      getCryptoOpeningPrice(crypto.asset_ticker) &&
+                      getCryptoOpeningPrice(crypto.asset_ticker).p
                     }
                   />
                 )

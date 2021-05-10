@@ -6,6 +6,8 @@ import {
   cryptoListDetailsReducer,
   cryptoUpdateDetailsReducer,
   cryptoUpdateReducer,
+  cryptoAddReducer,
+  cryptoDeleteReducer,
 } from './reducers/cryptoReducers';
 
 const reducer = combineReducers({
@@ -13,6 +15,8 @@ const reducer = combineReducers({
   cryptoListDetails: cryptoListDetailsReducer,
   cryptoUpdateDetails: cryptoUpdateDetailsReducer,
   cryptoUpdate: cryptoUpdateReducer,
+  cryptoAdd: cryptoAddReducer,
+  cryptoDelete: cryptoDeleteReducer,
 });
 
 const middleware = [thunk];

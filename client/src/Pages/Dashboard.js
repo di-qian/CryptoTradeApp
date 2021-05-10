@@ -32,7 +32,8 @@ const Dashboard = () => {
 
     cryptos.map((crypto) => {
       if (crypto.asset_name !== 'Cash') {
-        tempQuery = tempQuery + 'X:' + crypto.ticker + crypto.currency;
+        tempQuery = tempQuery + 'X:' + crypto.asset_ticker + 'USD';
+
         if (count < cryptos.length - 2) {
           tempQuery = tempQuery + ',';
         }
@@ -70,11 +71,8 @@ const Dashboard = () => {
 
   return (
     <div className="container-fluid">
-      <br />
-
       <Row>
-        <Col className="col-md-4">{/* <AssetBalanceChart /> */}</Col>
-        <Col className="col-md-4">
+        <Col className="col-md-8">
           <AssetPieChart latestData={latestData} />
         </Col>
         <Col className="col-md-4">
