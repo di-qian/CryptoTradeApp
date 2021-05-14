@@ -8,16 +8,22 @@ import AssetPieChart from '../Components/Charts/AssetPieChart';
 import AssetBalanceChart from '../Components/Charts/AssetBalanceChart';
 import ProfolioTable from '../Components/DynamicTables/ProfolioTable';
 
-const Dashboard = () => {
+const Dashboard = ({ history }) => {
   const dispatch = useDispatch();
   const cryptoList = useSelector((state) => state.cryptoList);
   const { loading, error, cryptos } = cryptoList;
-  const [query, setQuery] = useState('');
   const [latestData, setLatestData] = useState([]);
 
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
   useEffect(() => {
-    dispatch(listCryptos());
-  }, [dispatch]);
+    if (!userInfo) {
+      history.push('/auth/fail');
+    } else {
+      dispatch(listCryptos(userInfo._id));
+    }
+  }, [dispatch, history]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -30,16 +36,17 @@ const Dashboard = () => {
     var count = 0;
     var tempQuery = '';
 
-    cryptos.map((crypto) => {
-      if (crypto.asset_name !== 'Cash') {
-        tempQuery = tempQuery + 'X:' + crypto.asset_ticker + 'USD';
+    cryptos &&
+      cryptos.map((crypto) => {
+        if (crypto.asset_name !== 'Cash') {
+          tempQuery = tempQuery + 'X:' + crypto.asset_ticker + 'USD';
 
-        if (count < cryptos.length - 2) {
-          tempQuery = tempQuery + ',';
+          if (count < cryptos.length - 2) {
+            tempQuery = tempQuery + ',';
+          }
+          count = count + 1;
         }
-        count = count + 1;
-      }
-    });
+      });
     if (tempQuery !== '') {
       const jsonify = (res) => res.json();
       const dataFetch = fetch(

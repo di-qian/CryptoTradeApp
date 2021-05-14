@@ -45,26 +45,31 @@ const AssetPieChart = (inLatestData) => {
     var legend;
     var dps = [];
 
-    cryptos.map((crypto) => {
-      quantity = Number(crypto.quantity);
+    cryptos &&
+      cryptos.map((crypto) => {
+        quantity = Number(crypto.quantity);
 
-      curPrice =
-        crypto.asset_ticker === 'Cash'
-          ? 1.0
-          : getCryptoCurPrice(crypto.asset_ticker) &&
-            getCryptoCurPrice(crypto.asset_ticker).p;
+        curPrice =
+          crypto.asset_ticker === 'Cash'
+            ? 1.0
+            : getCryptoCurPrice(crypto.asset_ticker) &&
+              getCryptoCurPrice(crypto.asset_ticker).p;
 
-      total_worth = quantity * curPrice;
-      total_worth_rounded = total_worth.toFixed(2);
-      label = crypto.asset_name;
-      legend = crypto.asset_name + ': $' + total_worth_rounded;
+        total_worth = quantity * curPrice;
+        total_worth_rounded = total_worth.toFixed(2);
+        label = crypto.asset_name;
+        legend = crypto.asset_name + ': $' + total_worth_rounded;
 
-      let datapoint = { y: total_worth, legendText: legend, indexLabel: label };
+        let datapoint = {
+          y: total_worth,
+          legendText: legend,
+          indexLabel: label,
+        };
 
-      dps.push(datapoint);
+        dps.push(datapoint);
 
-      total_worth_rounded >= 0 && count++;
-    });
+        total_worth_rounded >= 0 && count++;
+      });
 
     if (count !== 0 && count === cryptos.length) {
       setAssetPieChartLoading(false);

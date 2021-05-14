@@ -1,5 +1,5 @@
 import axios from 'axios';
-const {
+import {
   CRYPTO_LIST_REQUEST,
   CRYPTO_LIST_SUCCESS,
   CRYPTO_LIST_FAIL,
@@ -18,13 +18,20 @@ const {
   CRYPTO_DELETE_REQUEST,
   CRYPTO_DELETE_SUCCESS,
   CRYPTO_DELETE_FAIL,
-} = require('../constants/cryptoConstants');
+} from '../constants/cryptoConstants';
+import { logout } from './userActions';
 
-export const listCryptos = () => async (dispatch) => {
+export const listCryptos = (user_id) => async (dispatch) => {
   try {
     dispatch({ type: CRYPTO_LIST_REQUEST });
 
-    const { data } = await axios.get('/api/v1/cryptos');
+    const config = {
+      params: {
+        user_id: user_id,
+      },
+    };
+
+    const { data } = await axios.get('/api/v1/cryptos', config);
 
     dispatch({ type: CRYPTO_LIST_SUCCESS, payload: data });
   } catch (err) {
@@ -38,67 +45,114 @@ export const listCryptos = () => async (dispatch) => {
   }
 };
 
-export const listCryptosDetails = (cryptoTicker, userEmail) => async (
+export const listCryptosDetails = (cryptoTicker, user_id) => async (
   dispatch
 ) => {
   try {
     dispatch({ type: CRYPTO_LIST_DETAILS_REQUEST });
-    console.log(cryptoTicker);
-    const { data } = await axios.get(`/api/v1/cryptos/${cryptoTicker}`);
+
+    const config = {
+      params: {
+        user_id: user_id,
+      },
+    };
+
+    const { data } = await axios.get(`/api/v1/cryptos/${cryptoTicker}`, config);
+    console.log(data);
 
     dispatch({ type: CRYPTO_LIST_DETAILS_SUCCESS, payload: data });
-  } catch (err) {
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    if (message === 'Not authorized, token failed') {
+      dispatch(logout());
+    }
     dispatch({
       type: CRYPTO_LIST_DETAILS_FAIL,
-      payload:
-        err.response && err.response.data.message
-          ? err.response.data.message
-          : err.message,
+      payload: error.response.data,
     });
   }
 };
 
-export const updateCryptosDetails = (crypto) => async (dispatch) => {
+export const updateCryptosDetails = (crypto) => async (dispatch, getState) => {
   try {
     dispatch({ type: CRYPTO_UPDATE_DETAILS_REQUEST });
 
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
     const { data } = await axios.put(
       `/api/v1/cryptos/${crypto.asset_ticker}`,
-      crypto
+      crypto,
+      config
     );
 
     dispatch({ type: CRYPTO_UPDATE_DETAILS_SUCCESS, payload: data });
-  } catch (err) {
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    if (message === 'Not authorized, token failed') {
+      dispatch(logout());
+    }
     dispatch({
       type: CRYPTO_UPDATE_DETAILS_FAIL,
-      payload:
-        err.response && err.response.data.message
-          ? err.response.data.message
-          : err.message,
+      payload: error.response.data,
     });
   }
 };
 
-export const updateCryptos = (owner_email, asset_name, cash) => async (
-  dispatch
+export const updateCryptos = (user_id, asset_name, cash) => async (
+  dispatch,
+  getState
 ) => {
   try {
     dispatch({ type: CRYPTO_UPDATE_REQUEST });
 
-    const { data } = await axios.put('/api/v1/cryptos', {
-      owner_email,
-      asset_name,
-      cash,
-    });
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.put(
+      '/api/v1/cryptos',
+      {
+        user_id,
+        asset_name,
+        cash,
+      },
+      config
+    );
 
     dispatch({ type: CRYPTO_UPDATE_SUCCESS, payload: data });
-  } catch (err) {
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    if (message === 'Not authorized, token failed') {
+      dispatch(logout());
+    }
     dispatch({
       type: CRYPTO_UPDATE_FAIL,
-      payload:
-        err.response && err.response.data.message
-          ? err.response.data.message
-          : err.message,
+      payload: error.response.data,
     });
   }
 };
@@ -109,22 +163,21 @@ export const addCrypto = (crypto) => async (dispatch, getState) => {
       type: CRYPTO_CREATE_REQUEST,
     });
 
-    // const {
-    //   userLogin: { userInfo },
-    // } = getState();
+    const {
+      userLogin: { userInfo },
+    } = getState();
 
-    // const config = {
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     Authorization: `Bearer ${userInfo.token}`,
-    //   },
-    // };
-
-    //const { data } = await axios.post(`/api/bugs`, newbug, config);
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
 
     const { data } = await axios.post(
       `/api/v1/cryptos/${crypto.asset_ticker}`,
-      crypto
+      crypto,
+      config
     );
 
     dispatch({
@@ -136,9 +189,9 @@ export const addCrypto = (crypto) => async (dispatch, getState) => {
       error.response && error.response.data.message
         ? error.response.data.message
         : error.message;
-    // if (message === 'Not authorized, token failed') {
-    //   dispatch(logout());
-    // }
+    if (message === 'Not authorized, token failed') {
+      dispatch(logout());
+    }
     dispatch({
       type: CRYPTO_CREATE_FAIL,
       payload: error.response.data,
@@ -146,26 +199,33 @@ export const addCrypto = (crypto) => async (dispatch, getState) => {
   }
 };
 
-export const deleteCrypto = (id, owner_email) => async (dispatch, getState) => {
+export const deleteCrypto = (cryptoid, user_id) => async (
+  dispatch,
+  getState
+) => {
   try {
     dispatch({
       type: CRYPTO_DELETE_REQUEST,
     });
 
-    // const {
-    //   userLogin: { userInfo },
-    // } = getState();
+    const {
+      userLogin: { userInfo },
+    } = getState();
 
-    // const config = {
-    //   headers: {
-    //     Authorization: `Bearer ${userInfo.token}`,
-    //   },
-    // };
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
 
-    //await axios.delete(`/api/bugs/${id}`, config);
-    await axios.delete(`/api/v1/cryptos/${id}`, {
-      data: { owner_email: owner_email },
-    });
+    await axios.delete(
+      `/api/v1/cryptos/${cryptoid}`,
+      {
+        data: { user_id: user_id },
+      },
+      config
+    );
 
     dispatch({
       type: CRYPTO_DELETE_SUCCESS,
@@ -175,9 +235,9 @@ export const deleteCrypto = (id, owner_email) => async (dispatch, getState) => {
       error.response && error.response.data.message
         ? error.response.data.message
         : error.message;
-    // if (message === 'Not authorized, token failed') {
-    //   dispatch(logout());
-    // }
+    if (message === 'Not authorized, token failed') {
+      dispatch(logout());
+    }
     dispatch({
       type: CRYPTO_DELETE_FAIL,
       payload: message,

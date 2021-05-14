@@ -34,6 +34,9 @@ const BuyForm = (props) => {
   const cryptoAdd = useSelector((state) => state.cryptoAdd);
   const { success: crypto_add_success, error: crypto_add_fail } = cryptoAdd;
 
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
   const [show, setShow] = useState(false);
 
   const [buyAmount, setBuyAmount] = useState(0);
@@ -90,15 +93,16 @@ const BuyForm = (props) => {
 
   const addCryptoToDatabase = async () => {
     let newCrypto = {
-      owner_email: 'johndoe@gmail.com',
+      user_id: userInfo._id,
+      owner_email: userInfo.email,
       asset_name: cryptoTickers.base_currency_name,
+      asset_ticker: cryptoTickers.base_currency_symbol,
       quantity: buyAmount / cryptoPrice,
       purchase_price: cryptoPrice,
-      asset_ticker: cryptoTickers.base_currency_symbol,
     };
     await dispatch(addCrypto(newCrypto));
 
-    await dispatch(listCryptosDetails(crypto.asset_ticker, crypto.owner_email));
+    await dispatch(listCryptosDetails(crypto.asset_ticker, userInfo._id));
 
     updateCash();
 
@@ -124,7 +128,7 @@ const BuyForm = (props) => {
       updateCryptosDetails({ ...crypto, quantity, purchase_price })
     );
 
-    dispatch(listCryptosDetails(crypto.asset_ticker, crypto.owner_email));
+    dispatch(listCryptosDetails(crypto.asset_ticker, userInfo._id));
 
     updateCash();
 
@@ -133,11 +137,11 @@ const BuyForm = (props) => {
 
   const updateCash = async () => {
     var cash = retrieveCashInfo().quantity - buyAmount;
-    const owner_email = 'johndoe@gmail.com';
+    var user_id = userInfo._id;
     const asset_name = 'Cash';
 
-    await dispatch(updateCryptos(owner_email, asset_name, cash));
-    dispatch(listCryptos());
+    await dispatch(updateCryptos(user_id, asset_name, cash));
+    dispatch(listCryptos(userInfo._id));
   };
 
   const handleClose = () => setShow(false);

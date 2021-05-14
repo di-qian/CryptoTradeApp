@@ -40,10 +40,13 @@ export const cryptoListReducer = (state = { cryptos: [] }, action) => {
   }
 };
 
-export const cryptoListDetailsReducer = (state = { cryptos: [] }, action) => {
+export const cryptoListDetailsReducer = (
+  state = { cryptoInfo: [] },
+  action
+) => {
   switch (action.type) {
     case CRYPTO_LIST_DETAILS_REQUEST:
-      return { loading: true, cryptos: [] };
+      return { loading: true, cryptoInfo: [] };
     case CRYPTO_LIST_DETAILS_SUCCESS:
       return {
         loading: false,
@@ -52,7 +55,7 @@ export const cryptoListDetailsReducer = (state = { cryptos: [] }, action) => {
     case CRYPTO_LIST_DETAILS_FAIL:
       return { loading: false, error: action.payload };
     case CRYPTO_LIST_DETAILS_RESET:
-      return { cryptos: [] };
+      return { cryptoInfo: [] };
     default:
       return state;
   }

@@ -12,13 +12,15 @@ const CryptoPage = ({ history, match }) => {
   const cryptoListDetails = useSelector((state) => state.cryptoListDetails);
   const { loading, error, crypto } = cryptoListDetails;
 
-  const userEmail = 'johndoe@gmail.com';
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
   const [openPrice, setOpenPrice] = useState({});
   const [btcPrice, setBtcPrice] = useState({});
   const [tickers, setTickers] = useState({});
 
   useEffect(() => {
-    dispatch(listCryptos());
+    dispatch(listCryptos(userInfo._id));
     const ticker = 'X:' + match.params.id + 'USD';
     const jsonify = (res) => res.json();
     const results = fetch(
@@ -40,7 +42,9 @@ const CryptoPage = ({ history, match }) => {
       base_currency_name: currencyData.base_currency_name,
     };
 
-    dispatch(listCryptosDetails(processData.base_currency_symbol, userEmail));
+    dispatch(
+      listCryptosDetails(processData.base_currency_symbol, userInfo._id)
+    );
     setTickers(processData);
   };
 

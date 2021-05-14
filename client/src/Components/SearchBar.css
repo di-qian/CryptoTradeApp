@@ -8,8 +8,10 @@
 }
 
 .drop-down-item {
+  position: absolute;
   font-size: small;
-  width: 21.4em;
+  width: inherit;
+  z-index: 1;
 }
 
 .drop-down-overflow {

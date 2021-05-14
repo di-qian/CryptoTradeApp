@@ -40,11 +40,14 @@ const SellForm = (props) => {
   const cryptoUpdate = useSelector((state) => state.cryptoUpdate);
   const { cryptos_update_success, error: cryptos_update_fail } = cryptoUpdate;
 
-  const cryptoDelete = useSelector((state) => state.cryptoAdd);
+  const cryptoDelete = useSelector((state) => state.cryptoDelete);
   const {
     success: crypto_delete_success,
     error: crypto_delete_fail,
   } = cryptoDelete;
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
 
   const [show, setShow] = useState(false);
 
@@ -92,13 +95,11 @@ const SellForm = (props) => {
   };
 
   const deleteCryptoFromDatabase = async () => {
-    const user_email = 'johndoe@gmail.com';
-    await dispatch(
-      deleteCrypto(cryptoTickers.base_currency_symbol, user_email)
-    );
+    var user_id = userInfo._id;
+    await dispatch(deleteCrypto(cryptoTickers.base_currency_symbol, user_id));
 
     await dispatch(
-      listCryptosDetails(cryptoTickers.base_currency_symbol, user_email)
+      listCryptosDetails(cryptoTickers.base_currency_symbol, user_id)
     );
 
     updateCash();
@@ -126,7 +127,7 @@ const SellForm = (props) => {
       updateCryptosDetails({ ...crypto, quantity, purchase_price })
     );
 
-    dispatch(listCryptosDetails(crypto.asset_ticker, crypto.owner_email));
+    dispatch(listCryptosDetails(crypto.asset_ticker, userInfo._id));
 
     updateCash();
     handleClose();
@@ -135,13 +136,12 @@ const SellForm = (props) => {
   const updateCash = async () => {
     var sell_quantity = sellAmount * cryptoPrice;
     var cash = Number(retrieveCashInfo().quantity) + +sell_quantity;
-    console.log(sell_quantity);
-    console.log(cash);
-    const owner_email = 'johndoe@gmail.com';
+
+    var user_id = userInfo._id;
     const asset_name = 'Cash';
 
-    await dispatch(updateCryptos(owner_email, asset_name, cash));
-    dispatch(listCryptos());
+    await dispatch(updateCryptos(user_id, asset_name, cash));
+    dispatch(listCryptos(userInfo._id));
   };
 
   const handleClose = () => setShow(false);

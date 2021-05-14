@@ -32,19 +32,20 @@ const Auto = () => {
 
   const processCurrData = (currencyData) => {
     let processData = [];
+    console.log(currencyData);
     currencyData
       .filter((value) => value.currency_symbol === 'USD')
       .map((currData) => {
         const jsonify = (res) => res.json();
         const results = fetch(
-          `https://api.polygon.io/v1/last/crypto/${currData.base_currency_symbol}/USD?&` +
+          `https://api.polygon.io/v2/snapshot/locale/global/markets/crypto/tickers/X:${currData.base_currency_symbol}USD?&` +
             new URLSearchParams({
               apiKey: process.env.REACT_APP_APIKEY,
             })
         )
           .then(jsonify)
           .then((data) => {
-            data.status === 'success' &&
+            data.status === 'OK' &&
               processData.push({
                 base_currency_symbol: currData.base_currency_symbol,
                 base_currency_name: currData.base_currency_name,
@@ -64,8 +65,8 @@ const Auto = () => {
     }
   };
 
-  const updatePokeDex = (poke) => {
-    setSearch(poke);
+  const updateSearchList = (cryptoName) => {
+    setSearch(cryptoName);
     setDisplay(false);
   };
 
@@ -81,25 +82,6 @@ const Auto = () => {
     }
   };
 
-  const checkTickerValidity = () => {
-    console.log('hello9');
-    const jsonify = (res) => res.json();
-    const dataFetch = fetch(
-      `https://api.polygon.io/v1/last/crypto/${search}/USD?&` +
-        new URLSearchParams({
-          apiKey: process.env.REACT_APP_APIKEY,
-        })
-    )
-      .then(jsonify)
-      .then((data) => {
-        console.log(data.status === 'success');
-        if (data.status === 'success') {
-          return `/cryptos/${search}`;
-        }
-      });
-    return '';
-  };
-
   return (
     <div ref={wrapperRef} className="search-bar-dropdown">
       <InputGroup>
@@ -113,7 +95,7 @@ const Auto = () => {
         />
         <InputGroup.Append>
           <LinkContainer to={`/cryptos/${search}`}>
-            <Button variant="outline-secondary">
+            <Button variant="outline-secondary" disabled={!search}>
               <i className="fa fa-search" aria-hidden="true" />
             </Button>
           </LinkContainer>
@@ -130,7 +112,7 @@ const Auto = () => {
               return (
                 <ListGroup.Item
                   action
-                  onClick={() => updatePokeDex(option.base_currency_symbol)}
+                  onClick={() => updateSearchList(option.base_currency_symbol)}
                   key={i}
                 >
                   <span className="currency_symbol">

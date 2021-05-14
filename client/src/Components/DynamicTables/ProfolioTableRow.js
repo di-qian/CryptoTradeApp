@@ -21,7 +21,8 @@ const ProfolioTableRow = (props) => {
           <h1>{props?.name}</h1>
           <span>
             {worth ? (
-              props.volume && props.volume + ' shares ($' + worth + ')'
+              props.volume &&
+              props.volume.toFixed(6) + ' shares ($' + worth + ')'
             ) : (
               <Spinner animation="border" size="sm" variant="dark" />
             )}

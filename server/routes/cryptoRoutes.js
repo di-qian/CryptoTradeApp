@@ -8,13 +8,14 @@ const {
   changeAssetsById,
   deleteAssetsById,
 } = require('../controllers/cryptoController');
+const { protect } = require('../middleware/authMiddleware.js');
 
-router.route('/').get(getAssets).put(changeAssets);
+router.route('/').get(getAssets).put(protect, changeAssets);
 router
   .route('/:id')
   .get(getAssetsById)
-  .post(addAssetsById)
-  .put(changeAssetsById)
+  .post(protect, addAssetsById)
+  .put(protect, changeAssetsById)
   .delete(deleteAssetsById);
 
 module.exports = router;

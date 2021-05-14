@@ -64,25 +64,26 @@ const ProfolioTable = (inLatestData) => {
 
         <div className="stats__content">
           <div className="stats__rows">
-            {cryptos.map(
-              (crypto) =>
-                crypto.asset_name !== 'Cash' && (
-                  <ProfolioTableRow
-                    key={crypto.id}
-                    name={crypto.asset_name}
-                    openPrice={
-                      getCryptoOpeningPrice(crypto.asset_ticker) &&
-                      getCryptoOpeningPrice(crypto.asset_ticker).o
-                    }
-                    volume={crypto.quantity}
-                    ticker={crypto.asset_ticker}
-                    price={
-                      getCryptoOpeningPrice(crypto.asset_ticker) &&
-                      getCryptoOpeningPrice(crypto.asset_ticker).p
-                    }
-                  />
-                )
-            )}
+            {cryptos &&
+              cryptos.map(
+                (crypto) =>
+                  crypto.asset_name !== 'Cash' && (
+                    <ProfolioTableRow
+                      key={crypto.id}
+                      name={crypto.asset_name}
+                      openPrice={
+                        getCryptoOpeningPrice(crypto.asset_ticker) &&
+                        getCryptoOpeningPrice(crypto.asset_ticker).o
+                      }
+                      volume={crypto.quantity}
+                      ticker={crypto.asset_ticker}
+                      price={
+                        getCryptoOpeningPrice(crypto.asset_ticker) &&
+                        getCryptoOpeningPrice(crypto.asset_ticker).p
+                      }
+                    />
+                  )
+              )}
           </div>
         </div>
       </div>

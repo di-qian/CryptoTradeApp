@@ -10,6 +10,8 @@ import {
   cryptoDeleteReducer,
 } from './reducers/cryptoReducers';
 
+import { userLoginReducer, userRegisterReducer } from './reducers/userReducers';
+
 const reducer = combineReducers({
   cryptoList: cryptoListReducer,
   cryptoListDetails: cryptoListDetailsReducer,
@@ -17,12 +19,21 @@ const reducer = combineReducers({
   cryptoUpdate: cryptoUpdateReducer,
   cryptoAdd: cryptoAddReducer,
   cryptoDelete: cryptoDeleteReducer,
+  userLogin: userLoginReducer,
+  userRegister: userRegisterReducer,
 });
+
+const userInfoFromStorage = localStorage.getItem('userInfo')
+  ? JSON.parse(localStorage.getItem('userInfo'))
+  : null;
+
+const initialState = { userLogin: { userInfo: userInfoFromStorage } };
 
 const middleware = [thunk];
 
 const store = createStore(
   reducer,
+  initialState,
   composeWithDevTools(applyMiddleware(...middleware))
 );
 

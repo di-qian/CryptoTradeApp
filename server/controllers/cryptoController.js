@@ -3,7 +3,10 @@ const db = require('../db');
 
 const getAssets = asyncHandler(async (req, res) => {
   try {
-    const results = await db.query('SELECT * FROM profolio');
+    const results = await db.query(
+      'SELECT * FROM profolio WHERE user_id = $1',
+      [req.query.user_id]
+    );
 
     res.status(200).json({
       status: 'success',
@@ -25,8 +28,8 @@ const getAssetsById = asyncHandler(async (req, res) => {
     // );
 
     const results = await db.query(
-      'SELECT * from profolio WHERE profolio.asset_ticker = $1',
-      [req.params.id]
+      'SELECT * from profolio WHERE user_id = $2 AND profolio.asset_ticker = $1',
+      [req.params.id, req.query.user_id]
     );
 
     if (results.rows.length > 0) {
@@ -58,8 +61,8 @@ const changeAssets = asyncHandler(async (req, res) => {
   try {
     console.log(req.body);
     const results = await db.query(
-      'UPDATE profolio SET quantity=$3 WHERE owner_email = $1 AND asset_name=$2 returning *',
-      [req.body.owner_email, req.body.asset_name, req.body.cash]
+      'UPDATE profolio SET quantity=$3 WHERE user_id = $1 AND asset_name=$2 returning *',
+      [req.body.user_id, req.body.asset_name, req.body.cash]
     );
     console.log(results.rows);
     res.status(200).json({
@@ -74,9 +77,9 @@ const changeAssets = asyncHandler(async (req, res) => {
 const changeAssetsById = asyncHandler(async (req, res) => {
   try {
     const results = await db.query(
-      'UPDATE profolio SET quantity=$3, purchase_price=$4 WHERE owner_email = $1 AND asset_name=$2 returning *',
+      'UPDATE profolio SET quantity=$3, purchase_price=$4 WHERE user_id = $1 AND asset_name=$2 returning *',
       [
-        req.body.owner_email,
+        req.body.user_id,
         req.body.asset_name,
         req.body.quantity,
         req.body.purchase_price,
@@ -94,14 +97,16 @@ const changeAssetsById = asyncHandler(async (req, res) => {
 
 const addAssetsById = asyncHandler(async (req, res) => {
   try {
+    console.log(req.body);
     const results = await db.query(
-      'INSERT INTO profolio(owner_email, asset_name, quantity, purchase_price, asset_ticker) VALUES ($1, $2, $3, $4, $5) returning *',
+      'INSERT INTO profolio(user_id, owner_email, asset_name, asset_ticker, quantity, purchase_price) VALUES ($1, $2, $3, $4, $5, $6) returning *',
       [
+        req.body.user_id,
         req.body.owner_email,
         req.body.asset_name,
+        req.body.asset_ticker,
         req.body.quantity,
         req.body.purchase_price,
-        req.body.asset_ticker,
       ]
     );
 
@@ -118,12 +123,9 @@ const addAssetsById = asyncHandler(async (req, res) => {
 
 const deleteAssetsById = asyncHandler(async (req, res) => {
   try {
-    console.log('nihao');
-    console.log(req.body);
-    console.log(req.params.id);
     const results = await db.query(
-      'DELETE FROM profolio WHERE owner_email=$1 AND asset_ticker=$2',
-      [req.body.owner_email, req.params.id]
+      'DELETE FROM profolio WHERE user_id=$1 AND asset_ticker=$2',
+      [req.body.user_id, req.params.id]
     );
     res.status(204).json({
       status: 'success',

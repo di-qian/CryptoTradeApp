@@ -1,0 +1,220 @@
+main {
+  min-height: 80vh;
+}
+
+.ik:hover {
+  cursor: pointer;
+}
+
+.fh {
+  color: red;
+}
+
+.fn {
+  color: orange;
+}
+
+.fl {
+  color: blue;
+}
+.fs {
+  color: green;
+}
+
+.hide {
+  visibility: hidden;
+}
+
+.hideAdmin {
+  display: none;
+}
+
+span {
+  display: inline-block;
+
+  line-height: normal;
+}
+
+.trwidth {
+  width: 0%;
+}
+
+hr.solid {
+  border-top: 1px solid #999;
+}
+
+.profileImage {
+  width: 15%;
+  border-radius: 50%;
+}
+
+.ex1 {
+  margin-left: 30px;
+}
+
+.title1 {
+  font-size: 1.3rem;
+}
+
+.jumboheight {
+  padding-top: 25px;
+  padding-bottom: 25px;
+}
+
+.vertalign {
+  vertical-align: middle;
+}
+
+.groupposition {
+  position: relative;
+}
+
+.tooltipposition {
+  position: relative;
+}
+
+.descriptionposition {
+  left: 5px;
+}
+
+.buttonwidth {
+  width: 250px;
+}
+
+.toastwidth {
+  width: 200px;
+}
+
+.carousel h4 {
+  color: black;
+}
+
+.carousel p {
+  color: black;
+}
+
+/* carousel */
+.carousel-item-next,
+.carousel-item-prev,
+.carousel-item.active {
+  display: block;
+  height: 250px;
+}
+
+.carousel-caption {
+  position: absolute;
+  top: 0;
+}
+
+.wrapper {
+  max-width: 200px;
+  width: 100%;
+}
+
+.carousel .carousel-indicators li {
+  background-color: #fff;
+  background-color: rgba(70, 70, 70, 0.25);
+}
+
+.carousel .carousel-indicators .active {
+  background-color: #444;
+}
+
+.carousel-control-next,
+  .carousel-control-prev /*, .carousel-indicators */ {
+  filter: invert(100%);
+}
+
+@media screen and (min-width: 601px) {
+  h2.homefont {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 50px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  h2.homefont {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 30px;
+  }
+}
+
+@media screen and (min-width: 601px) {
+  .pagetitlefont {
+    font-family: 'Poppins', sans-serif;
+    font-size: 40px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .pagetitlefont {
+    font-family: 'Poppins', sans-serif;
+    font-size: 30px;
+  }
+}
+
+@media screen and (max-width: 1225px) and (min-width: 1095px) {
+  .display-createdAt {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1095px) and (min-width: 835px) {
+  .display-createdAt {
+    display: none;
+  }
+  .display-resolvedBy {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 835px) and (min-width: 595px) {
+  .display-createdAt {
+    display: none;
+  }
+  .display-resolvedBy {
+    display: none;
+  }
+  .display-priority {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 595px) and (min-width: 415px) {
+  .display-createdAt {
+    display: none;
+  }
+  .display-resolvedBy {
+    display: none;
+  }
+  .display-priority {
+    display: none;
+  }
+  .display-assignedTo {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 415px) {
+  .display-project {
+    display: none;
+  }
+  .display-createdAt {
+    display: none;
+  }
+  .display-resolvedBy {
+    display: none;
+  }
+  .display-priority {
+    display: none;
+  }
+  .display-assignedTo {
+    display: none;
+  }
+  .display-manager {
+    display: none;
+  }
+  .display-admin {
+    display: none;
+  }
+}
