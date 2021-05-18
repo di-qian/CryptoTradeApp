@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { CanvasJSChart } from 'canvasjs-react-charts';
 import { useSelector } from 'react-redux';
-import { Spinner } from 'react-bootstrap';
+import { Spinner, Row } from 'react-bootstrap';
+import './AssetPieChart.css';
 
 const AssetPieChart = (inLatestData) => {
   const cryptoList = useSelector((state) => state.cryptoList);
@@ -79,16 +80,17 @@ const AssetPieChart = (inLatestData) => {
       animationEnabled: true,
       exportEnabled: false,
       theme: 'light1', // "light1", "dark1", "dark2"
-      title: {
-        text: 'Profolio Breakdown',
-        fontFamily: 'arial',
-        fontWeight: 'bold',
-        fontSize: 20,
-      },
+      // title: {
+      //   text: 'Profolio Breakdown',
+      //   fontFamily: 'arial',
+      //   fontWeight: 'bold',
+      //   fontSize: 20,
+      // },
       legend: {
         verticalAlign: 'bottom',
         horizontalAlign: 'center',
       },
+      backgroundColor: '#f5f5f5',
       data: [
         {
           type: 'doughnut',
@@ -106,12 +108,17 @@ const AssetPieChart = (inLatestData) => {
   };
 
   return (
-    <div>
-      {!AssetPieChartLoading ? (
-        <CanvasJSChart options={chartoptions} />
-      ) : (
-        <Spinner animation="border" variant="dark" />
-      )}
+    <div className="mb-4 stats__container">
+      <div className="stats__header">
+        <p className="charttitle ">Asset Breakdown</p>
+      </div>
+      <div>
+        {!AssetPieChartLoading ? (
+          <CanvasJSChart options={chartoptions} />
+        ) : (
+          <Spinner animation="border" variant="dark" />
+        )}
+      </div>
     </div>
   );
 };

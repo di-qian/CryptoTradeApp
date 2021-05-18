@@ -52,8 +52,20 @@ hr.solid {
   margin-left: 30px;
 }
 
-.title1 {
-  font-size: 1.3rem;
+.title-deposit-page {
+  font-size: 15px;
+  font-weight: 500;
+  border-bottom: 1px solid #e5e6e7;
+}
+
+.form-outline {
+  border-radius: 5px;
+  border: 1px solid #e5e6e7;
+  padding-bottom: 5px;
+}
+
+.footer {
+  border-top: 1px solid #e5e6e7;
 }
 
 .jumboheight {
@@ -79,6 +91,10 @@ hr.solid {
 
 .buttonwidth {
   width: 250px;
+}
+
+.navbarbtn {
+  width: 80px;
 }
 
 .toastwidth {
@@ -143,6 +159,8 @@ hr.solid {
   .pagetitlefont {
     font-family: 'Poppins', sans-serif;
     font-size: 40px;
+    border-bottom: 2px solid #e5e6e7;
+    padding-bottom: 10px;
   }
 }
 
@@ -150,6 +168,7 @@ hr.solid {
   .pagetitlefont {
     font-family: 'Poppins', sans-serif;
     font-size: 30px;
+    border-bottom: 2px solid #e5e6e7;
   }
 }
 

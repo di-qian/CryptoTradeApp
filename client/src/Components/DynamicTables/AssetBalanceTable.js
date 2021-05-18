@@ -4,7 +4,7 @@ import './ProfolioTable.css';
 import ProfolioTableRow from './ProfolioTableRow';
 import { useDispatch, useSelector } from 'react-redux';
 
-const ProfolioTable = (inLatestData) => {
+const AssetBalanceTable = (inLatestData) => {
   const cryptoList = useSelector((state) => state.cryptoList);
   const { loading, error, cryptos } = cryptoList;
 
@@ -54,7 +54,7 @@ const ProfolioTable = (inLatestData) => {
       <div className="stats__container">
         <div className="stats__header">
           <div>
-            <p> Crypto Profolio</p>
+            <p>Account Overview</p>
           </div>
           <div className="row__numbers">
             <p> {formatted_datetime()}</p>
@@ -94,4 +94,4 @@ const ProfolioTable = (inLatestData) => {
   );
 };
 
-export default ProfolioTable;
+export default AssetBalanceTable;

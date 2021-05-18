@@ -59,12 +59,11 @@ const getAssetsById = asyncHandler(async (req, res) => {
 
 const changeAssets = asyncHandler(async (req, res) => {
   try {
-    console.log(req.body);
     const results = await db.query(
       'UPDATE profolio SET quantity=$3 WHERE user_id = $1 AND asset_name=$2 returning *',
       [req.body.user_id, req.body.asset_name, req.body.cash]
     );
-    console.log(results.rows);
+
     res.status(200).json({
       status: 'success',
       data: results.rows,

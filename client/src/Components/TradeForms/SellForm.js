@@ -10,7 +10,6 @@ import {
   InputGroup,
   FormControl,
 } from 'react-bootstrap';
-import { ToastContainer, toast } from 'react-toastify';
 import './TradeForm.css';
 import {
   listCryptos,

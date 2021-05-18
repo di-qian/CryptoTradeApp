@@ -53,14 +53,8 @@ const RealtimeChart = ({ cryptoPrice, openPrice, cryptoTickers }) => {
       });
   }, [cryptoTickers]);
 
-  const printName = () => {
-    // console.log('initData: ' + initData);
-    // console.log('crypto: ' + crypto);
-  };
-
   return (
     <div>
-      {printName()}
       <br />
       <h2>{cryptoTickers.base_currency_name}</h2>
 

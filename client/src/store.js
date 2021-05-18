@@ -11,6 +11,7 @@ import {
 } from './reducers/cryptoReducers';
 
 import { userLoginReducer, userRegisterReducer } from './reducers/userReducers';
+import { makeDepositReducer } from './reducers/transactionReducers';
 
 const reducer = combineReducers({
   cryptoList: cryptoListReducer,
@@ -21,6 +22,7 @@ const reducer = combineReducers({
   cryptoDelete: cryptoDeleteReducer,
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
+  makeDeposit: makeDepositReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo')

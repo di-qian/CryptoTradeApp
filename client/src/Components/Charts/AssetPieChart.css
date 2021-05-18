@@ -1,0 +1,28 @@
+.stats__container {
+  flex-direction: column;
+  flex: 1;
+  /* min-width: 360px;
+  max-width: 360px; */
+  height: auto;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+  border: 1px solid #e5e6e7;
+  padding-bottom: 5px;
+}
+
+.stats__header {
+  display: flex;
+  font-size: 16px;
+  align-items: center;
+  border-bottom: 1px solid #e5e6e7;
+  padding: 20px 24px 10px 24px;
+  font-weight: bold;
+}
+
+.profoliorow {
+  display: flex;
+  padding: 0 24px;
+  padding-top: 15px;
+  align-items: center;
+  border-bottom: 1px solid #e5e6e7;
+}

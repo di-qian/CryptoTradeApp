@@ -1,8 +1,5 @@
 .stats {
-  width: 400px;
-  max-width: 400px;
-  display: inline-block;
-  padding: 0px 30px 30px 30px;
+  min-width: 300px;
 }
 
 .stats__container {
@@ -82,4 +79,15 @@
 .row__percentage_neg {
   color: rgb(224, 8, 8);
   align-items: center;
+}
+
+.empty-profolio {
+  display: flex;
+
+  font-size: 14px;
+  font-weight: 500;
+  color: gray;
+  height: 80px;
+  align-items: center;
+  justify-content: center;
 }

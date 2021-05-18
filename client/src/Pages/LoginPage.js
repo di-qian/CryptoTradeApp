@@ -50,14 +50,21 @@ const LoginPage = ({ location, history }) => {
   return (
     <FormContainer>
       <Row className="justify-content-md-center">
-        <Col md={8}>
+        <Col
+          xs={{ span: 10, offset: 1 }}
+          sm={{ span: 8, offset: 2 }}
+          md={{ span: 6, offset: 0 }}
+          lg={{ span: 4, offset: 0 }}
+        >
           <h3 className="pagetitlefont mb-3">Sign In</h3>
-          <hr />
+
           {loading && <Loader />}
           <Form onSubmit={submitHandler}>
             <Form.Group className="groupposition" controlId="email">
-              <Form.Label className="mr-1">Email Address</Form.Label>
-              <i className="fas fa-asterisk fa-xs fh"></i>
+              <Form.Label className="mr-1">
+                <i className="fas fa-asterisk fa-xs fh mr-1"></i>Email Address
+              </Form.Label>
+
               <Form.Control
                 type="email"
                 placeholder="Enter email"
@@ -75,8 +82,10 @@ const LoginPage = ({ location, history }) => {
             </Form.Group>
 
             <Form.Group className="groupposition" controlId="password">
-              <Form.Label className="mr-1">Password</Form.Label>
-              <i className="fas fa-asterisk fa-xs fh"></i>
+              <Form.Label className="mr-1">
+                <i className="fas fa-asterisk fa-xs fh mr-1"></i>Password
+              </Form.Label>
+
               <Form.Control
                 type="password"
                 placeholder="Enter password"

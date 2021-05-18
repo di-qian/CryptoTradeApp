@@ -20,7 +20,14 @@ const CryptoPage = ({ history, match }) => {
   const [tickers, setTickers] = useState({});
 
   useEffect(() => {
-    dispatch(listCryptos(userInfo._id));
+    if (!userInfo) {
+      history.push('/auth/fail');
+    } else {
+      dispatch(listCryptos(userInfo._id));
+    }
+  }, []);
+
+  useEffect(() => {
     const ticker = 'X:' + match.params.id + 'USD';
     const jsonify = (res) => res.json();
     const results = fetch(
@@ -109,14 +116,14 @@ const CryptoPage = ({ history, match }) => {
     <>
       <Container>
         <Row>
-          <Col xs={12} md={8}>
+          <Col sm={12} md={8}>
             <RealtimeChart
               cryptoPrice={btcPrice.p}
               openPrice={openPrice.o}
               cryptoTickers={tickers}
             />
           </Col>
-          <Col xs={6} md={4}>
+          <Col sm={12} md={4}>
             <TradeForm cryptoPrice={btcPrice.p} cryptoTickers={tickers} />
 
             <MyPosition cryptoPrice={btcPrice.p} openPrice={openPrice.o} />

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
-import { Row, Col, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { listCryptos } from '../actions/cryptoActions';
 
 import AssetPieChart from '../Components/Charts/AssetPieChart';
 import AssetBalanceChart from '../Components/Charts/AssetBalanceChart';
 import ProfolioTable from '../Components/DynamicTables/ProfolioTable';
+import AssetBalanceTable from '../Components/DynamicTables/AssetBalanceTable';
 
 const Dashboard = ({ history }) => {
   const dispatch = useDispatch();
@@ -77,16 +78,21 @@ const Dashboard = ({ history }) => {
   };
 
   return (
-    <div className="container-fluid">
-      <Row>
-        <Col className="col-md-8">
-          <AssetPieChart latestData={latestData} />
-        </Col>
-        <Col className="col-md-4">
-          <ProfolioTable latestData={latestData} />
-        </Col>
-      </Row>
-    </div>
+    <>
+      <Container>
+        <Row>
+          <Col sm={12} md={12} lg={4}>
+            <AssetBalanceTable latestData={latestData} />
+          </Col>
+          <Col sm={12} md={6} lg={4}>
+            <AssetPieChart latestData={latestData} />
+          </Col>
+          <Col sm={12} md={6} lg={4}>
+            <ProfolioTable latestData={latestData} />
+          </Col>
+        </Row>
+      </Container>
+    </>
   );
 };
 

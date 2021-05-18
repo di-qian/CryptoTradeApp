@@ -58,14 +58,21 @@ const RegisterPage = ({ location, history }) => {
   return (
     <FormContainer>
       <Row className="justify-content-md-center">
-        <Col md={8}>
-          <h3 className="pagetitlefont">Sign Up</h3> <hr />
+        <Col
+          xs={{ span: 10, offset: 1 }}
+          sm={{ span: 8, offset: 2 }}
+          md={{ span: 6, offset: 0 }}
+          lg={{ span: 4, offset: 0 }}
+        >
+          <h3 className="pagetitlefont">Sign Up</h3>
           {error && <Message variant="danger">{error}</Message>}
           {loading && <Loader />}
           <Form onSubmit={submitHandler}>
             <Form.Group className="groupposition" controlId="name">
-              <Form.Label className="mr-1">Name</Form.Label>
-              <i className="fas fa-asterisk fa-xs fh"></i>
+              <Form.Label className="mr-1">
+                <i className="fas fa-asterisk fa-xs fh mr-1"></i>Name
+              </Form.Label>
+
               <Form.Control
                 type="text"
                 placeholder="Enter name"
@@ -83,8 +90,11 @@ const RegisterPage = ({ location, history }) => {
             </Form.Group>
 
             <Form.Group className="groupposition" controlId="email">
-              <Form.Label className="mr-1">Email Address</Form.Label>
-              <i className="fas fa-asterisk fa-xs fh"></i>
+              <Form.Label className="mr-1">
+                {' '}
+                <i className="fas fa-asterisk fa-xs fh mr-1"></i>Email Address
+              </Form.Label>
+
               <Form.Control
                 type="email"
                 placeholder="Enter email"
@@ -102,8 +112,10 @@ const RegisterPage = ({ location, history }) => {
             </Form.Group>
 
             <Form.Group className="groupposition" controlId="password">
-              <Form.Label className="mr-1">Password</Form.Label>
-              <i className="fas fa-asterisk fa-xs fh"></i>
+              <Form.Label className="mr-1">
+                <i className="fas fa-asterisk fa-xs fh mr-1"></i>Password
+              </Form.Label>
+
               <Form.Control
                 type="password"
                 placeholder="Enter password"
@@ -121,8 +133,11 @@ const RegisterPage = ({ location, history }) => {
             </Form.Group>
 
             <Form.Group className="groupposition" controlId="confirmPassword">
-              <Form.Label className="mr-1">Confirm Password</Form.Label>
-              <i className="fas fa-asterisk fa-xs fh"></i>
+              <Form.Label className="mr-1">
+                <i className="fas fa-asterisk fa-xs fh mr-1"></i>Confirm
+                Password
+              </Form.Label>
+
               <Form.Control
                 type="password"
                 placeholder="Confirm password"

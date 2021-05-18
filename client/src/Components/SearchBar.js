@@ -32,7 +32,7 @@ const Auto = () => {
 
   const processCurrData = (currencyData) => {
     let processData = [];
-    console.log(currencyData);
+
     currencyData
       .filter((value) => value.currency_symbol === 'USD')
       .map((currData) => {
@@ -44,6 +44,7 @@ const Auto = () => {
             })
         )
           .then(jsonify)
+
           .then((data) => {
             data.status === 'OK' &&
               processData.push({
@@ -52,8 +53,6 @@ const Auto = () => {
               });
           });
       });
-
-    console.log(processData);
 
     setOptions(processData);
   };
@@ -83,7 +82,7 @@ const Auto = () => {
   };
 
   return (
-    <div ref={wrapperRef} className="search-bar-dropdown">
+    <div ref={wrapperRef} className="search-bar-dropdown align-items-start">
       <InputGroup>
         <FormControl
           id="auto"
@@ -96,7 +95,7 @@ const Auto = () => {
         <InputGroup.Append>
           <LinkContainer to={`/cryptos/${search}`}>
             <Button variant="outline-secondary" disabled={!search}>
-              <i className="fa fa-search" aria-hidden="true" />
+              <i className="fa fa-search fa-xs" aria-hidden="true" />
             </Button>
           </LinkContainer>
         </InputGroup.Append>

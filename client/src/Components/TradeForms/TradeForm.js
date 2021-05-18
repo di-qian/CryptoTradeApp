@@ -12,12 +12,10 @@ const TradeForm = ({ cryptoPrice, cryptoTickers }) => {
   const [key, setKey] = useState('buy');
 
   const buyorderStatusToast = (e) => {
-    console.log('inside buy toast: ' + key);
     key === 'buy' && toast.success(e);
   };
 
   const sellorderStatusToast = (e) => {
-    console.log('inside sell toast: ' + key);
     key === 'sell' && toast.success(e);
   };
 
