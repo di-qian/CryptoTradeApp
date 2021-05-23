@@ -26,16 +26,20 @@ const Homepage = ({ location, history }) => {
 
   useEffect(() => {
     const jsonify = (res) => res.json();
-    const results = fetch(
-      'https://api.polygon.io/v2/snapshot/locale/global/markets/crypto/gainers?' +
-        new URLSearchParams({
-          apiKey: process.env.REACT_APP_APIKEY,
-        })
-    )
-      .then(jsonify)
-      .then((data) => {
-        processCurrData(data.tickers);
-      });
+    try {
+      const results = fetch(
+        'https://api.polygon.io/v2/snapshot/locale/global/markets/crypto/gainers?' +
+          new URLSearchParams({
+            apiKey: process.env.REACT_APP_APIKEY,
+          })
+      )
+        .then(jsonify)
+        .then((data) => {
+          processCurrData(data.tickers);
+        });
+    } catch (err) {
+      console.log(err);
+    }
   }, [dispatch]);
 
   const processCurrData = (curr_DataSet) => {

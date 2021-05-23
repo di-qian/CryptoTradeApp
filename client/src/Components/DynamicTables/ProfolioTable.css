@@ -37,14 +37,46 @@
   height: 60px;
   padding: 0 24px;
   padding-top: 15px;
+  padding-bottom: 5px;
+  align-items: center;
+  border-top: 1px solid #e5e6e7;
+  cursor: pointer;
+}
+
+.namerow {
+  display: flex;
+  justify-content: space-between;
+  height: 60px;
+  padding: 0 24px;
+  padding-top: 15px;
+  padding-bottom: 5px;
+  align-items: center;
+  border-top: 1px solid #e5e6e7;
+}
+
+.accountrow {
+  display: flex;
+  justify-content: space-between;
+
+  padding: 0 24px;
+  padding-top: 15px;
 
   align-items: center;
-  border-bottom: 1px solid #e5e6e7;
-  cursor: pointer;
+  border-top: 1px solid #e5e6e7;
 }
 
 .profoliorow:hover {
   background-color: rgba(233, 224, 224, 0.932);
+}
+
+.cashrow {
+  display: flex;
+  justify-content: space-between;
+  height: 60px;
+  padding: 0 24px;
+  padding-top: 15px;
+  align-items: center;
+  border-top: 1px solid #e5e6e7;
 }
 
 .row__intro > h1 {
@@ -62,6 +94,11 @@
   font-weight: 500;
 }
 
+.row__title > p {
+  font-size: 12px;
+  line-height: 0.3;
+}
+
 .row__numbers > p {
   font-size: 12px;
   line-height: 0.3;
@@ -77,13 +114,12 @@
 }
 
 .row__percentage_neg {
-  color: rgb(224, 8, 8);
+  color: rgb(235, 8, 8);
   align-items: center;
 }
 
 .empty-profolio {
   display: flex;
-
   font-size: 14px;
   font-weight: 500;
   color: gray;

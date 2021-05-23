@@ -33,7 +33,7 @@ const ProfolioTableRow = (props) => {
           <p className="row__price">
             {props.price ? '$' + props.price.toFixed(2) : ''}
           </p>
-          <span
+          <p
             className={
               percentage >= 0 ? 'row__percentage_pos' : 'row__percentage_neg'
             }
@@ -44,7 +44,7 @@ const ProfolioTableRow = (props) => {
             ) : (
               <Spinner animation="border" size="sm" variant="dark" />
             )}
-          </span>
+          </p>
           <p
             className={
               percentage >= 0 ? 'row__percentage_pos' : 'row__percentage_neg'

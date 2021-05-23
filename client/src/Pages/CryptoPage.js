@@ -30,17 +30,22 @@ const CryptoPage = ({ history, match }) => {
   useEffect(() => {
     const ticker = 'X:' + match.params.id + 'USD';
     const jsonify = (res) => res.json();
-    const results = fetch(
-      `https://api.polygon.io/v3/reference/tickers?ticker=${ticker}&market=crypto&active=true&sort=ticker&order=asc&limit=1000&` +
-        new URLSearchParams({
-          apiKey: process.env.REACT_APP_APIKEY,
-        })
-    )
-      .then(jsonify)
-      .then((data) => {
-        console.log(data);
-        processTickerData(data.results[0]);
-      });
+    try {
+      const results = async () =>
+        await fetch(
+          `https://api.polygon.io/v3/reference/tickers?ticker=${ticker}&market=crypto&active=true&sort=ticker&order=asc&limit=1000&` +
+            new URLSearchParams({
+              apiKey: process.env.REACT_APP_APIKEY,
+            })
+        )
+          .then(jsonify)
+          .then((data) => {
+            processTickerData(data.results[0]);
+          });
+      results();
+    } catch (err) {
+      console.log(err);
+    }
   }, [dispatch, match.params.id]);
 
   const processTickerData = (currencyData) => {
@@ -71,18 +76,22 @@ const CryptoPage = ({ history, match }) => {
 
   const getBtcPrice = () => {
     const jsonify = (res) => res.json();
-    const dataFetch = fetch(
-      `https://api.polygon.io/v1/last/crypto/${match.params.id}/USD?&` +
-        new URLSearchParams({
-          apiKey: process.env.REACT_APP_APIKEY,
-        })
-    )
-      .then(jsonify)
-      .then((data) => {
-        var temp_btcprice = Number(data.last.price);
+    try {
+      const dataFetch = fetch(
+        `https://api.polygon.io/v1/last/crypto/${match.params.id}/USD?&` +
+          new URLSearchParams({
+            apiKey: process.env.REACT_APP_APIKEY,
+          })
+      )
+        .then(jsonify)
+        .then((data) => {
+          var temp_btcprice = Number(data.last.price);
 
-        setBtcPrice({ p: temp_btcprice });
-      });
+          setBtcPrice({ p: temp_btcprice });
+        });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const setCryptoOpenPrice = () => {
@@ -91,16 +100,20 @@ const CryptoPage = ({ history, match }) => {
     tempQuery = tempQuery + 'X:' + match.params.id + 'USD';
 
     const jsonify = (res) => res.json();
-    const dataFetch = fetch(
-      `https://api.polygon.io/v2/snapshot/locale/global/markets/crypto/tickers?tickers=${tempQuery}&` +
-        new URLSearchParams({
-          apiKey: process.env.REACT_APP_APIKEY,
-        })
-    )
-      .then(jsonify)
-      .then((data) => {
-        processCurrData(data.tickers);
-      });
+    try {
+      const dataFetch = fetch(
+        `https://api.polygon.io/v2/snapshot/locale/global/markets/crypto/tickers?tickers=${tempQuery}&` +
+          new URLSearchParams({
+            apiKey: process.env.REACT_APP_APIKEY,
+          })
+      )
+        .then(jsonify)
+        .then((data) => {
+          processCurrData(data.tickers);
+        });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const processCurrData = (curr_DataSet) => {

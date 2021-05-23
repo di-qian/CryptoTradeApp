@@ -1,13 +1,18 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { InputGroup, FormControl, ListGroup, Button } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import './SearchBar.css';
 
 const Auto = () => {
+  const dispatch = useDispatch();
   const [display, setDisplay] = useState(false);
   const [options, setOptions] = useState([]);
   const [search, setSearch] = useState('');
   const wrapperRef = useRef(null);
+
+  const cryptoListDetails = useSelector((state) => state.cryptoListDetails);
+  const { loading, error, crypto } = cryptoListDetails;
 
   useEffect(() => {
     const jsonify = (res) => res.json();
@@ -24,6 +29,12 @@ const Auto = () => {
   }, []);
 
   useEffect(() => {
+    if (loading === true) {
+      setSearch('');
+    }
+  }, [loading]);
+
+  useEffect(() => {
     window.addEventListener('mousedown', handleClickOutside);
     return () => {
       window.removeEventListener('mousedown', handleClickOutside);
@@ -37,24 +48,27 @@ const Auto = () => {
       .filter((value) => value.currency_symbol === 'USD')
       .map((currData) => {
         const jsonify = (res) => res.json();
-        const results = fetch(
-          `https://api.polygon.io/v2/snapshot/locale/global/markets/crypto/tickers/X:${currData.base_currency_symbol}USD?&` +
-            new URLSearchParams({
-              apiKey: process.env.REACT_APP_APIKEY,
-            })
-        )
-          .then(jsonify)
+        try {
+          const results = fetch(
+            `https://api.polygon.io/v2/snapshot/locale/global/markets/crypto/tickers/X:${currData.base_currency_symbol}USD?&` +
+              new URLSearchParams({
+                apiKey: process.env.REACT_APP_APIKEY,
+              })
+          )
+            .then(jsonify)
 
-          .then((data) => {
-            data.status === 'OK' &&
-              processData.push({
-                base_currency_symbol: currData.base_currency_symbol,
-                base_currency_name: currData.base_currency_name,
-              });
-          });
+            .then((data) => {
+              data.status === 'OK' &&
+                processData.push({
+                  base_currency_symbol: currData.base_currency_symbol,
+                  base_currency_name: currData.base_currency_name,
+                });
+            });
+          setOptions(processData);
+        } catch (err) {
+          console.log(err);
+        }
       });
-
-    setOptions(processData);
   };
 
   const handleClickOutside = (event) => {
@@ -81,6 +95,10 @@ const Auto = () => {
     }
   };
 
+  const clearInput = () => {
+    setSearch('');
+  };
+
   return (
     <div ref={wrapperRef} className="search-bar-dropdown align-items-start">
       <InputGroup>
@@ -94,7 +112,11 @@ const Auto = () => {
         />
         <InputGroup.Append>
           <LinkContainer to={`/cryptos/${search}`}>
-            <Button variant="outline-secondary" disabled={!search}>
+            <Button
+              variant="outline-secondary"
+              onClick={() => clearInput()}
+              disabled={!search}
+            >
               <i className="fa fa-search fa-xs" aria-hidden="true" />
             </Button>
           </LinkContainer>

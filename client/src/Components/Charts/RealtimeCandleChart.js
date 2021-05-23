@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import CanvasJSReact from './canvasjs.stock.react';
-var CanvasJSStockChart = CanvasJSReact.CanvasJSStockChart;
+import { useDispatch, useSelector } from 'react-redux';
 
-const RealtimeCandleChart = ({ crypto, baseData }) => {
+const RealtimeCandleChart = () => {
+  var CanvasJSStockChart = CanvasJSReact.CanvasJSStockChart;
+  const cryptoListDetails = useSelector((state) => state.cryptoListDetails);
+  const { loading, error, crypto } = cryptoListDetails;
   const [isLoaded, setIsLoaded] = useState(false);
-  let [dataOut, setDataOut] = useState([]);
+  const [dataOut, setDataOut] = useState([]);
   const [rangeChangedTriggered, setRangeChangedTriggered] = useState(false);
   const [datapoint1, setDatapoint1] = useState([]);
   const [datapoint2, setDatapoint2] = useState([]);
 
-  let ws = new WebSocket('wss://socket.polygon.io/crypto');
+  const ws = useRef(null);
 
   var currentDate = new Date();
   var xVal = new Date();
@@ -17,65 +20,133 @@ const RealtimeCandleChart = ({ crypto, baseData }) => {
   var vVal;
 
   useEffect(() => {
-    setIsLoaded(false);
-    setDatapoint1([]);
-    setDatapoint1([]);
-    setDataOut([]);
-    setRangeChangedTriggered(false);
+    ws.current = new WebSocket('wss://socket.polygon.io/crypto');
 
-    ws.onopen = function (event) {
+    ws.current.onopen = async () => {
       const auth_data = `{"action":"auth","params":"${process.env.REACT_APP_APIKEY}"}`;
-      ws.send(auth_data);
-      if (crypto) {
-        const ticker_currency = crypto.asset_ticker + '-' + 'USD';
-        const request_data = `{"action":"subscribe", "params":"XA.${ticker_currency}"}`;
-        ws.send(request_data);
-      }
+      await ws.current.send(auth_data);
     };
-    ws.onmessage = (data) => {
-      let obj = JSON.parse(data.data);
 
-      if (obj[0].ev === 'XA') {
-        var dt = new Date(obj[0].s);
-        dt.setMinutes(dt.getMinutes() + 1);
-
-        let dataFr = {
-          x: dt,
-          y: [
-            Number(obj[0].o),
-            Number(obj[0].h),
-            Number(obj[0].l),
-            Number(obj[0].c),
-          ],
-          v: Number(obj[0].v),
-        };
-
-        setDataOut((curData) => [...curData, dataFr]);
-      }
-      obj[0] && console.log(obj[0].ev === 'XA' ? dataOut : obj[0].message);
-
-      return () => {
-        ws.close();
-      };
-    };
     return () => {
-      if (crypto) {
-        console.log('candlestick chart websocket unmounted');
-        const ticker_currency = crypto.asset_ticker + '-' + 'USD';
-        const request_data = `{"action":"unsubscribe", "params":"XA.${ticker_currency}"}`;
-        ws.send(request_data);
-      }
-      ws.close();
+      ws.current.close();
     };
-  }, [crypto]);
+  }, []);
 
   useEffect(() => {
-    if (!isLoaded) {
-      setInitData(baseData);
-    }
+    if (!ws.current) return;
+    let isCancelled = false;
+    const runAsync = async () => {
+      try {
+        if (!isCancelled) {
+          if (crypto) {
+            const ticker_currency = crypto.asset_ticker + '-' + 'USD';
+            const request_data = `{"action":"subscribe", "params":"XA.${ticker_currency}"}`;
+            await ws.current.send(request_data);
+          }
+          ws.current.onmessage = (data) => {
+            let obj = JSON.parse(data.data);
+            if (obj[0].ev === 'XA') {
+              var dt = new Date(obj[0].s);
+              dt.setMinutes(dt.getMinutes() + 1);
+              let dataFr = {
+                x: dt,
+                y: [
+                  Number(obj[0].o),
+                  Number(obj[0].h),
+                  Number(obj[0].l),
+                  Number(obj[0].c),
+                ],
+                v: Number(obj[0].v),
+              };
+              setDataOut((curData) => [...curData, dataFr]);
+            }
+            obj[0] &&
+              console.log(obj[0].ev === 'XA' ? dataOut : obj[0].message);
+          };
+        }
+      } catch (e) {
+        if (!isCancelled) {
+          throw e;
+        }
+      }
+    };
+    getInitData();
+    runAsync();
+    return () => {
+      if (crypto) {
+        const unsubscribe = async () => {
+          console.log('candlestick chart websocket unmounted');
+          const ticker_currency = crypto.asset_ticker + '-' + 'USD';
+          const request_data = `{"action":"unsubscribe", "params":"XA.${ticker_currency}"}`;
+          await ws.current.send(request_data);
+          setDataOut([]);
+          setDatapoint1([]);
+          setDatapoint2([]);
+          setRangeChangedTriggered([]);
+          setIsLoaded(false);
+        };
+        unsubscribe();
+      }
+    };
+  }, [crypto, loading]);
 
-    updateChart(dataOut);
-  }, [crypto, baseData, dataOut]);
+  // useEffect(() => {
+  //   updateChart(dataOut);
+  // }, [dataOut]);
+
+  const getInitData = () => {
+    if (crypto) {
+      var now = new Date();
+      var startOfDay = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate()
+      );
+
+      var endOfDay = new Date(
+        new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1) - 1
+      );
+
+      var startOfDayTimestamp = startOfDay.valueOf();
+      var endOfDayTimestamp = endOfDay.valueOf();
+
+      const ticker_currency = crypto.asset_ticker + 'USD';
+
+      const jsonify = (res) => res.json();
+
+      try {
+        const dataFetch = async () => {
+          await fetch(
+            `https://api.polygon.io/v2/aggs/ticker/X:${ticker_currency}/range/1/minute/${startOfDayTimestamp}/${endOfDayTimestamp}?unadjusted=true&sort=asc&limit=1440&` +
+              new URLSearchParams({
+                apiKey: process.env.REACT_APP_APIKEY,
+              })
+          )
+            .then(jsonify)
+            .then((data) => {
+              let CurrData = [];
+
+              data.results &&
+                data.results.forEach((i) => {
+                  var dt = new Date(i.t);
+                  dt.setMinutes(dt.getMinutes() + 1);
+
+                  CurrData.push({
+                    x: dt,
+                    y: [Number(i.o), Number(i.h), Number(i.l), Number(i.c)],
+                    v: Number(i.v),
+                  });
+                });
+
+              setInitData(CurrData);
+            });
+        };
+        dataFetch();
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  };
 
   const setInitData = (inBaseData) => {
     inBaseData.forEach((i) => {
@@ -89,24 +160,24 @@ const RealtimeCandleChart = ({ crypto, baseData }) => {
     });
   };
 
-  const updateChart = (inData) => {
-    if (Object.keys(inData).length > 0) {
-      xVal = inData[Object.keys(inData).length - 1].x;
-      yVal = inData[Object.keys(inData).length - 1].y;
-      vVal = inData[Object.keys(inData).length - 1].v;
+  // const updateChart = (inData) => {
+  //   if (Object.keys(inData).length > 0) {
+  //     xVal = inData[Object.keys(inData).length - 1].x;
+  //     yVal = inData[Object.keys(inData).length - 1].y;
+  //     vVal = inData[Object.keys(inData).length - 1].v;
 
-      let dps = { x: xVal, y: yVal };
-      let dpv = { x: xVal, y: vVal };
-      setDatapoint1((currentData) => [...currentData, dps]);
-      setDatapoint2((currentData) => [...currentData, dpv]);
+  //     let dps = { x: xVal, y: yVal };
+  //     let dpv = { x: xVal, y: vVal };
+  //     setDatapoint1((currentData) => [...currentData, dps]);
+  //     setDatapoint2((currentData) => [...currentData, dpv]);
 
-      setIsLoaded(true);
-    }
+  //     setIsLoaded(true);
+  //   }
 
-    if (!rangeChangedTriggered) {
-      options.navigator.slider.minimum = new Date(xVal - 600 * 1000);
-    }
-  };
+  //   if (!rangeChangedTriggered) {
+  //     options.navigator.slider.minimum = new Date(xVal - 1800 * 1000);
+  //   }
+  // };
 
   const options = {
     theme: 'light2', //"light2", "dark1", "dark2"
@@ -143,7 +214,6 @@ const RealtimeCandleChart = ({ crypto, baseData }) => {
         ],
       },
       {
-        height: 100,
         axisY: {
           title: 'Volume',
           tickLength: 0,
@@ -163,7 +233,7 @@ const RealtimeCandleChart = ({ crypto, baseData }) => {
     ],
     navigator: {
       slider: {
-        minimum: new Date(currentDate.getTime() - 600 * 1000),
+        minimum: new Date(currentDate.getTime() - 1800 * 1000),
       },
       axisX: {
         labelFontColor: 'white',
@@ -174,8 +244,12 @@ const RealtimeCandleChart = ({ crypto, baseData }) => {
     },
   };
 
+  // const printName = () => {
+  //   console.log(datapoint1);
+  // };
   return (
     <div>
+      {/* {printName()} */}
       {!isLoaded ? (
         <h3>Please wait, loading...</h3>
       ) : (
