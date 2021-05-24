@@ -23,10 +23,8 @@ const BuyForm = (props) => {
   const cryptoListDetails = useSelector((state) => state.cryptoListDetails);
   const { crypto } = cryptoListDetails;
   const cryptoUpdateDetails = useSelector((state) => state.cryptoUpdateDetails);
-  const {
-    detail_update_success,
-    error: detail_update_fail,
-  } = cryptoUpdateDetails;
+  const { detail_update_success, error: detail_update_fail } =
+    cryptoUpdateDetails;
   const cryptoUpdate = useSelector((state) => state.cryptoUpdate);
   const { cryptos_update_success, error: cryptos_update_fail } = cryptoUpdate;
 
@@ -58,10 +56,12 @@ const BuyForm = (props) => {
       dispatch({ type: CRYPTO_UPDATE_RESET });
     }
   }, [
+    dispatch,
     detail_update_success,
     cryptos_update_success,
     detail_update_fail,
     cryptos_update_fail,
+    buyorderStatusToast,
   ]);
 
   useEffect(() => {
@@ -76,13 +76,7 @@ const BuyForm = (props) => {
       //toast.error('Buy Order Failed!');
       dispatch({ type: CRYPTO_CREATE_RESET });
     }
-  }, [crypto_add_success, crypto_add_fail]);
-
-  useEffect(() => {
-    return () => {
-      //
-    };
-  }, []);
+  }, [dispatch, crypto_add_success, crypto_add_fail, buyorderStatusToast]);
 
   const retrieveCashInfo = () => {
     const cashinfo = cryptos.filter((crypto) => crypto.asset_name === 'Cash');

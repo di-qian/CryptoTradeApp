@@ -8,7 +8,7 @@ import FormContainer from '../Components/FormContainer';
 import { register } from '../actions/userActions';
 import { GET_ERRORS_RESET } from '../constants/userConstants';
 
-const RegisterPage = ({ location, history }) => {
+const RegisterPage = ({ history }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,7 +20,7 @@ const RegisterPage = ({ location, history }) => {
   const dispatch = useDispatch();
 
   const userRegister = useSelector((state) => state.userRegister);
-  const { loading, error, success, userInfo, errors } = userRegister;
+  const { loading, error, userInfo, errors } = userRegister;
 
   const redirect = '/auth/dashboard';
 

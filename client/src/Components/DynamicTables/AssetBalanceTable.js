@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './ProfolioTable.css';
-import { Spinner, Row, Col } from 'react-bootstrap';
-import ProfolioTableRow from './ProfolioTableRow';
-import { useDispatch, useSelector } from 'react-redux';
-import { USER_LOGIN_ERRORS_RESET } from '../../constants/userConstants';
+
+import { useSelector } from 'react-redux';
 
 const AssetBalanceTable = ({ total_worth_v, latestData }) => {
   const cryptoList = useSelector((state) => state.cryptoList);
-  const { loading, error, cryptos } = cryptoList;
+  const { cryptos } = cryptoList;
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -16,9 +14,8 @@ const AssetBalanceTable = ({ total_worth_v, latestData }) => {
   const [today_difference_v, setToday_difference_v] = useState(0);
   const [total_difference_v, setTotal_difference_v] = useState(0);
 
-  const regp = /[^0-9.-]+/g;
-
   useEffect(() => {
+    const regp = /[^0-9.-]+/g;
     var quantity = 0;
     var curPrice = 0;
     var openPrice = 0;
@@ -30,7 +27,7 @@ const AssetBalanceTable = ({ total_worth_v, latestData }) => {
     setCurData(latestData);
 
     cryptos &&
-      cryptos.map((crypto) => {
+      cryptos.forEach((crypto) => {
         quantity = Number(crypto.quantity);
         purchase_price = parseFloat(crypto.purchase_price.replace(regp, ''));
 
@@ -51,9 +48,10 @@ const AssetBalanceTable = ({ total_worth_v, latestData }) => {
         total_difference += quantity * (curPrice - purchase_price);
         setTotal_difference_v(total_difference);
       });
-  }, [latestData]);
+  }, [cryptos, latestData]);
 
   useEffect(() => {
+    const regp = /[^0-9.-]+/g;
     var quantity = 0;
     var curPrice = 0;
     var openPrice = 0;
@@ -63,7 +61,7 @@ const AssetBalanceTable = ({ total_worth_v, latestData }) => {
     var total_difference = 0;
 
     cryptos &&
-      cryptos.map((crypto) => {
+      cryptos.forEach((crypto) => {
         quantity = Number(crypto.quantity);
         purchase_price = parseFloat(crypto.purchase_price.replace(regp, ''));
 
@@ -84,7 +82,7 @@ const AssetBalanceTable = ({ total_worth_v, latestData }) => {
         total_difference += quantity * (curPrice - purchase_price);
         setTotal_difference_v(total_difference);
       });
-  }, []);
+  }, [cryptos]);
 
   const retrieveCashInfo = () => {
     const cashinfo = cryptos.filter((crypto) => crypto.asset_name === 'Cash');
@@ -123,12 +121,8 @@ const AssetBalanceTable = ({ total_worth_v, latestData }) => {
     return result;
   }
 
-  const printName = () => {
-    //console.log(inLatestData);
-  };
   return (
     <div className="mb-3 stats">
-      {printName()}
       <div className="stats__container">
         <div className="stats__header">
           <div>
@@ -160,26 +154,24 @@ const AssetBalanceTable = ({ total_worth_v, latestData }) => {
                   : total_worth_v === 0 && '$0.00'}
               </p>
               <p
-                className={
-                  today_difference_v > 0
-                    ? 'row__percentage_pos'
-                    : today_difference_v < 0 && 'row__percentage_neg'
-                }
+              // className={
+              // today_difference_v > 0
+              //   ? 'row__percentage_pos'
+              //   : today_difference_v < 0 && 'row__percentage_neg'
+              // }
               >
-                {today_difference_v ? (
-                  '$' + today_difference_v.toFixed(2)
-                ) : today_difference_v === 0 ? (
-                  '$0.00'
-                ) : (
-                  <Spinner animation="border" size="sm" variant="dark" />
-                )}
+                {today_difference_v
+                  ? '$' + today_difference_v.toFixed(2)
+                  : today_difference_v === 0
+                  ? '$0.00'
+                  : 'loading...'}
               </p>
               <p
-                className={
-                  total_difference_v > 0
-                    ? 'row__percentage_pos'
-                    : total_difference_v < 0 && 'row__percentage_neg'
-                }
+              //className={
+              // total_difference_v > 0
+              //   ? 'row__percentage_pos'
+              //   : total_difference_v < 0 && 'row__percentage_neg'
+              // }
               >
                 {total_difference_v
                   ? '$' + total_difference_v.toFixed(2)
@@ -196,11 +188,7 @@ const AssetBalanceTable = ({ total_worth_v, latestData }) => {
             </div>
             <div className="row__numbers">
               <p>
-                {retrieveCashInfo() ? (
-                  '$' + retrieveCashInfo()
-                ) : (
-                  <Spinner animation="border" size="sm" variant="dark" />
-                )}
+                {retrieveCashInfo() ? '$' + retrieveCashInfo() : 'loading...'}
               </p>
             </div>
           </div>

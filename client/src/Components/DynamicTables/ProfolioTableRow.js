@@ -1,6 +1,5 @@
 import React from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
-import { Spinner } from 'react-bootstrap';
 import './ProfolioTable.css';
 
 const ProfolioTableRow = (props) => {
@@ -20,12 +19,10 @@ const ProfolioTableRow = (props) => {
         <div className="row__intro">
           <h1>{props?.name}</h1>
           <span>
-            {worth ? (
-              props.volume &&
-              props.volume.toFixed(6) + ' shares ($' + worth + ')'
-            ) : (
-              <Spinner animation="border" size="sm" variant="dark" />
-            )}
+            {worth
+              ? props.volume &&
+                props.volume.toFixed(6) + ' shares ($' + worth + ')'
+              : 'loading...'}
           </span>
         </div>
 
@@ -39,11 +36,7 @@ const ProfolioTableRow = (props) => {
             }
           >
             {' '}
-            {difference ? (
-              '$' + difference.toFixed(2)
-            ) : (
-              <Spinner animation="border" size="sm" variant="dark" />
-            )}
+            {difference ? '$' + difference.toFixed(2) : 'loading...'}
           </p>
           <p
             className={

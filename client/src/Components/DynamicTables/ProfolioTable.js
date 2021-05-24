@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import './ProfolioTable.css';
 
 import ProfolioTableRow from './ProfolioTableRow';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const ProfolioTable = (inLatestData) => {
   const cryptoList = useSelector((state) => state.cryptoList);
-  const { loading, error, cryptos } = cryptoList;
+  const { cryptos } = cryptoList;
 
   const [curData, setCurData] = useState([]);
 

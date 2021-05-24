@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 
-import { Container, Row, Col, Spinner } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { listCryptos } from '../actions/cryptoActions';
 
 import AssetPieChart from '../Components/Charts/AssetPieChart';
-import AssetBalanceChart from '../Components/Charts/AssetBalanceChart';
+
 import ProfolioTable from '../Components/DynamicTables/ProfolioTable';
 import AssetBalanceTable from '../Components/DynamicTables/AssetBalanceTable';
 
 const Dashboard = ({ history }) => {
   const dispatch = useDispatch();
   const cryptoList = useSelector((state) => state.cryptoList);
-  const { loading, error, cryptos } = cryptoList;
+  const { cryptos } = cryptoList;
 
   const [total_worth_v, setTotal_worth_v] = useState(0);
   const [latestData, setLatestData] = useState([]);
@@ -26,7 +26,7 @@ const Dashboard = ({ history }) => {
     } else {
       dispatch(listCryptos(userInfo._id));
     }
-  }, [dispatch, history]);
+  }, [dispatch, history, userInfo]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -40,7 +40,7 @@ const Dashboard = ({ history }) => {
     var tempQuery = '';
 
     cryptos &&
-      cryptos.map((crypto) => {
+      cryptos.forEach((crypto) => {
         if (crypto.asset_name !== 'Cash') {
           tempQuery = tempQuery + 'X:' + crypto.asset_ticker + 'USD';
 
@@ -54,16 +54,19 @@ const Dashboard = ({ history }) => {
     if (tempQuery !== '') {
       const jsonify = (res) => res.json();
       try {
-        const dataFetch = fetch(
-          `https://api.polygon.io/v2/snapshot/locale/global/markets/crypto/tickers?tickers=${tempQuery}&` +
-            new URLSearchParams({
-              apiKey: process.env.REACT_APP_APIKEY,
-            })
-        )
-          .then(jsonify)
-          .then((data) => {
-            processCurrData(data.tickers);
-          });
+        const dataFetch = () => {
+          fetch(
+            `https://api.polygon.io/v2/snapshot/locale/global/markets/crypto/tickers?tickers=${tempQuery}&` +
+              new URLSearchParams({
+                apiKey: process.env.REACT_APP_APIKEY,
+              })
+          )
+            .then(jsonify)
+            .then((data) => {
+              processCurrData(data.tickers);
+            });
+        };
+        dataFetch();
       } catch (err) {
         console.log(err);
       }
@@ -80,7 +83,7 @@ const Dashboard = ({ history }) => {
     total_worth = cryptos.filter((crypto) => crypto.asset_ticker === 'Cash')[0]
       .quantity;
 
-    curr_DataSet.map((currData) => {
+    curr_DataSet.forEach((currData) => {
       processData.push({
         o: currData.prevDay.c,
         p: currData.lastTrade.p,

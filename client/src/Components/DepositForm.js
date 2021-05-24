@@ -20,7 +20,7 @@ const DepositForm = (props) => {
   const { userInfo } = userLogin;
 
   const makeDepositInfo = useSelector((state) => state.makeDeposit);
-  const { loading, error, success, deposit } = makeDepositInfo;
+  const { error, success } = makeDepositInfo;
 
   useEffect(() => {
     if (success) {
@@ -36,7 +36,7 @@ const DepositForm = (props) => {
     }
 
     setCashDeposit(0);
-  }, [success, error]);
+  }, [dispatch, success, error, makeDepositStatusToast]);
 
   const retrieveCashInfo = () => {
     const cashinfo = cryptos.filter((crypto) => crypto.asset_name === 'Cash');
@@ -71,7 +71,7 @@ const DepositForm = (props) => {
           </StripeCheckout>
         </InputGroup.Append>
       </InputGroup>
-      <img className="img-stripe" src={stripeLogo} />
+      <img className="img-stripe" src={stripeLogo} alt="stripe logo" />
     </div>
   );
 };

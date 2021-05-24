@@ -30,20 +30,16 @@ const SellForm = (props) => {
   const cryptoList = useSelector((state) => state.cryptoList);
   const { cryptos } = cryptoList;
   const cryptoListDetails = useSelector((state) => state.cryptoListDetails);
-  const { loading, error, crypto } = cryptoListDetails;
+  const { crypto } = cryptoListDetails;
   const cryptoUpdateDetails = useSelector((state) => state.cryptoUpdateDetails);
-  const {
-    detail_update_success,
-    error: detail_update_fail,
-  } = cryptoUpdateDetails;
+  const { detail_update_success, error: detail_update_fail } =
+    cryptoUpdateDetails;
   const cryptoUpdate = useSelector((state) => state.cryptoUpdate);
   const { cryptos_update_success, error: cryptos_update_fail } = cryptoUpdate;
 
   const cryptoDelete = useSelector((state) => state.cryptoDelete);
-  const {
-    success: crypto_delete_success,
-    error: crypto_delete_fail,
-  } = cryptoDelete;
+  const { success: crypto_delete_success, error: crypto_delete_fail } =
+    cryptoDelete;
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -65,10 +61,12 @@ const SellForm = (props) => {
       dispatch({ type: CRYPTO_UPDATE_RESET });
     }
   }, [
+    dispatch,
     detail_update_success,
     cryptos_update_success,
     detail_update_fail,
     cryptos_update_fail,
+    sellorderStatusToast,
   ]);
 
   useEffect(() => {
@@ -81,11 +79,19 @@ const SellForm = (props) => {
       sellorderStatusToast('Sell Order Failed!');
       dispatch({ type: CRYPTO_DELETE_RESET });
     }
-  }, [crypto_delete_success, crypto_delete_fail]);
+  }, [
+    dispatch,
+    crypto_delete_success,
+    crypto_delete_fail,
+    sellorderStatusToast,
+  ]);
 
   useEffect(() => {
-    return () => {};
-  }, []);
+    return () => {
+      dispatch({ type: CRYPTO_UPDATE_DETAILS_RESET });
+      dispatch({ type: CRYPTO_UPDATE_RESET });
+    };
+  }, [dispatch]);
 
   const retrieveCashInfo = () => {
     const cashinfo = cryptos.filter((crypto) => crypto.asset_name === 'Cash');

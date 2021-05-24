@@ -10,7 +10,7 @@ import { CRYPTO_LIST_DETAILS_RESET } from '../constants/cryptoConstants';
 const CryptoPage = ({ history, match }) => {
   const dispatch = useDispatch();
   const cryptoListDetails = useSelector((state) => state.cryptoListDetails);
-  const { loading, error, crypto } = cryptoListDetails;
+  const { crypto } = cryptoListDetails;
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -25,7 +25,7 @@ const CryptoPage = ({ history, match }) => {
     } else {
       dispatch(listCryptos(userInfo._id));
     }
-  }, []);
+  }, [dispatch, history, userInfo]);
 
   useEffect(() => {
     const ticker = 'X:' + match.params.id + 'USD';
@@ -40,90 +40,100 @@ const CryptoPage = ({ history, match }) => {
         )
           .then(jsonify)
           .then((data) => {
+            const processTickerData = (currencyData) => {
+              let processData = {
+                base_currency_symbol: currencyData.base_currency_symbol,
+                base_currency_name: currencyData.base_currency_name,
+              };
+
+              dispatch(
+                listCryptosDetails(
+                  processData.base_currency_symbol,
+                  userInfo._id
+                )
+              );
+              setTickers(processData);
+            };
+
             processTickerData(data.results[0]);
           });
       results();
     } catch (err) {
       console.log(err);
     }
-  }, [dispatch, match.params.id]);
-
-  const processTickerData = (currencyData) => {
-    let processData = {
-      base_currency_symbol: currencyData.base_currency_symbol,
-      base_currency_name: currencyData.base_currency_name,
-    };
-
-    dispatch(
-      listCryptosDetails(processData.base_currency_symbol, userInfo._id)
-    );
-    setTickers(processData);
-  };
+  }, [dispatch, match.params.id, userInfo._id]);
 
   useEffect(() => {
+    const setCryptoOpenPrice = () => {
+      var tempQuery = '';
+
+      tempQuery = tempQuery + 'X:' + match.params.id + 'USD';
+
+      const jsonify = (res) => res.json();
+      try {
+        const dataFetch = () => {
+          fetch(
+            `https://api.polygon.io/v2/snapshot/locale/global/markets/crypto/tickers?tickers=${tempQuery}&` +
+              new URLSearchParams({
+                apiKey: process.env.REACT_APP_APIKEY,
+              })
+          )
+            .then(jsonify)
+            .then((data) => {
+              processCurrData(data.tickers);
+            });
+        };
+        dataFetch();
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    const processCurrData = (curr_DataSet) => {
+      var processData;
+      curr_DataSet.forEach((currData) => {
+        processData = { o: currData.prevDay.c };
+      });
+
+      setOpenPrice(processData);
+    };
+
     setCryptoOpenPrice();
+
     const interval = setInterval(() => {
+      const getBtcPrice = () => {
+        const jsonify = (res) => res.json();
+        try {
+          const dataFetch = () => {
+            fetch(
+              `https://api.polygon.io/v1/last/crypto/${match.params.id}/USD?&` +
+                new URLSearchParams({
+                  apiKey: process.env.REACT_APP_APIKEY,
+                })
+            )
+              .then(jsonify)
+              .then((data) => {
+                var temp_btcprice = Number(data.last.price);
+
+                setBtcPrice({ p: temp_btcprice });
+              });
+          };
+          dataFetch();
+        } catch (err) {
+          console.log(err);
+        }
+      };
+
       getBtcPrice();
     }, 1000);
     return () => clearInterval(interval);
-  }, [crypto]);
+  }, [crypto, match.params.id]);
 
   useEffect(() => {
     return () => {
       dispatch({ type: CRYPTO_LIST_DETAILS_RESET });
     };
-  }, []);
-
-  const getBtcPrice = () => {
-    const jsonify = (res) => res.json();
-    try {
-      const dataFetch = fetch(
-        `https://api.polygon.io/v1/last/crypto/${match.params.id}/USD?&` +
-          new URLSearchParams({
-            apiKey: process.env.REACT_APP_APIKEY,
-          })
-      )
-        .then(jsonify)
-        .then((data) => {
-          var temp_btcprice = Number(data.last.price);
-
-          setBtcPrice({ p: temp_btcprice });
-        });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const setCryptoOpenPrice = () => {
-    var tempQuery = '';
-
-    tempQuery = tempQuery + 'X:' + match.params.id + 'USD';
-
-    const jsonify = (res) => res.json();
-    try {
-      const dataFetch = fetch(
-        `https://api.polygon.io/v2/snapshot/locale/global/markets/crypto/tickers?tickers=${tempQuery}&` +
-          new URLSearchParams({
-            apiKey: process.env.REACT_APP_APIKEY,
-          })
-      )
-        .then(jsonify)
-        .then((data) => {
-          processCurrData(data.tickers);
-        });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const processCurrData = (curr_DataSet) => {
-    var processData;
-    curr_DataSet.map((currData) => {
-      processData = { o: currData.prevDay.c };
-    });
-
-    setOpenPrice(processData);
-  };
+  }, [dispatch]);
 
   return (
     <>

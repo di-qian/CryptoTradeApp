@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 import RealtimeCandleChart from './RealtimeCandleChart';
 import RealtimePriceTable from '../DynamicTables/RealtimePriceTable';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const RealtimeChart = ({ cryptoPrice, openPrice, cryptoTickers }) => {
   const cryptoListDetails = useSelector((state) => state.cryptoListDetails);
-  const { loading, error, crypto } = cryptoListDetails;
-
-  let [initData, setInitData] = useState([]);
+  const { loading } = cryptoListDetails;
 
   return (
     <div>

@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import CanvasJSReact from './canvasjs.stock.react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-const RealtimeCandleChart = () => {
+const RealtimeCandleChart = ({ cryptoTickers }) => {
   var CanvasJSStockChart = CanvasJSReact.CanvasJSStockChart;
   const cryptoListDetails = useSelector((state) => state.cryptoListDetails);
-  const { loading, error, crypto } = cryptoListDetails;
+  const { loading, crypto } = cryptoListDetails;
   const [isLoaded, setIsLoaded] = useState(false);
   const [dataOut, setDataOut] = useState([]);
   const [rangeChangedTriggered, setRangeChangedTriggered] = useState(false);
@@ -90,9 +90,9 @@ const RealtimeCandleChart = () => {
     };
   }, [crypto, loading]);
 
-  // useEffect(() => {
-  //   updateChart(dataOut);
-  // }, [dataOut]);
+  useEffect(() => {
+    updateChart(dataOut);
+  }, [dataOut]);
 
   const getInitData = () => {
     if (crypto) {
@@ -155,29 +155,28 @@ const RealtimeCandleChart = () => {
       let dpv = { x: xVal, y: i.v };
       setDatapoint1((currentData) => [...currentData, dps]);
       setDatapoint2((currentData) => [...currentData, dpv]);
-
-      setIsLoaded(true);
     });
+    setIsLoaded(true);
   };
 
-  // const updateChart = (inData) => {
-  //   if (Object.keys(inData).length > 0) {
-  //     xVal = inData[Object.keys(inData).length - 1].x;
-  //     yVal = inData[Object.keys(inData).length - 1].y;
-  //     vVal = inData[Object.keys(inData).length - 1].v;
+  const updateChart = (inData) => {
+    if (Object.keys(inData).length > 0) {
+      xVal = inData[Object.keys(inData).length - 1].x;
+      yVal = inData[Object.keys(inData).length - 1].y;
+      vVal = inData[Object.keys(inData).length - 1].v;
 
-  //     let dps = { x: xVal, y: yVal };
-  //     let dpv = { x: xVal, y: vVal };
-  //     setDatapoint1((currentData) => [...currentData, dps]);
-  //     setDatapoint2((currentData) => [...currentData, dpv]);
+      let dps = { x: xVal, y: yVal };
+      let dpv = { x: xVal, y: vVal };
+      setDatapoint1((currentData) => [...currentData, dps]);
+      setDatapoint2((currentData) => [...currentData, dpv]);
 
-  //     setIsLoaded(true);
-  //   }
+      setIsLoaded(true);
+    }
 
-  //   if (!rangeChangedTriggered) {
-  //     options.navigator.slider.minimum = new Date(xVal - 1800 * 1000);
-  //   }
-  // };
+    if (!rangeChangedTriggered) {
+      options.navigator.slider.minimum = new Date(xVal - 1800 * 1000);
+    }
+  };
 
   const options = {
     theme: 'light2', //"light2", "dark1", "dark2"
@@ -244,12 +243,12 @@ const RealtimeCandleChart = () => {
     },
   };
 
-  // const printName = () => {
-  //   console.log(datapoint1);
-  // };
+  const printName = () => {
+    //console.log(datapoint1);
+  };
   return (
     <div>
-      {/* {printName()} */}
+      {printName()}
       {!isLoaded ? (
         <h3>Please wait, loading...</h3>
       ) : (

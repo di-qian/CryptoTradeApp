@@ -1,15 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ToastContainer, toast } from 'react-toastify';
-import {
-  Alert,
-  Form,
-  Button,
-  Container,
-  Row,
-  Col,
-  ListGroup,
-} from 'react-bootstrap';
+import { toast } from 'react-toastify';
+import { Container, Row, Col } from 'react-bootstrap';
 import { listCryptos } from '../actions/cryptoActions';
 import DepositForm from '../Components/DepositForm';
 
@@ -24,36 +16,18 @@ const DepositPage = ({ history }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
-  const makeDepositInfo = useSelector((state) => state.makeDeposit);
-  const { loading, error, success, deposit } = makeDepositInfo;
-
-  // useEffect(() => {
-  //   if (!userInfo) {
-  //     history.push('/auth/fail');
-  //   } else {
-  //     dispatch(listCryptos(userInfo._id));
-  //     setCashTotal(retrieveCashInfo());
-  //   }
-  // }, [dispatch, success, error]);
-
   useEffect(() => {
     if (!userInfo) {
       history.push('/auth/fail');
     } else {
       dispatch(listCryptos(userInfo._id));
-      setCashTotal(retrieveCashInfo());
     }
-  }, []);
+  }, [dispatch, history, userInfo]);
 
   useEffect(() => {
-    setCashTotal(retrieveCashInfo());
-  }, [cryptos]);
-
-  const retrieveCashInfo = () => {
     const cashinfo = cryptos.filter((crypto) => crypto.asset_name === 'Cash');
-
-    return cashinfo[0] && cashinfo[0].quantity.toFixed(2);
-  };
+    cashinfo[0] && setCashTotal(cashinfo[0].quantity.toFixed(2));
+  }, [cryptos]);
 
   const makeDepositStatusToast = (e) => {
     dispatch(listCryptos(userInfo._id));

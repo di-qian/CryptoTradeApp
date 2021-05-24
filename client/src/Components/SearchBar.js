@@ -1,31 +1,33 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { InputGroup, FormControl, ListGroup, Button } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import './SearchBar.css';
 
 const Auto = () => {
-  const dispatch = useDispatch();
   const [display, setDisplay] = useState(false);
   const [options, setOptions] = useState([]);
   const [search, setSearch] = useState('');
   const wrapperRef = useRef(null);
 
   const cryptoListDetails = useSelector((state) => state.cryptoListDetails);
-  const { loading, error, crypto } = cryptoListDetails;
+  const { loading } = cryptoListDetails;
 
   useEffect(() => {
     const jsonify = (res) => res.json();
-    const results = fetch(
-      'https://api.polygon.io/v3/reference/tickers?market=crypto&active=true&sort=ticker&order=asc&limit=1000&' +
-        new URLSearchParams({
-          apiKey: process.env.REACT_APP_APIKEY,
-        })
-    )
-      .then(jsonify)
-      .then((data) => {
-        processCurrData(data.results);
-      });
+    const getAllCryptoTickers = () => {
+      fetch(
+        'https://api.polygon.io/v3/reference/tickers?market=crypto&active=true&sort=ticker&order=asc&limit=1000&' +
+          new URLSearchParams({
+            apiKey: process.env.REACT_APP_APIKEY,
+          })
+      )
+        .then(jsonify)
+        .then((data) => {
+          processCurrData(data.results);
+        });
+    };
+    getAllCryptoTickers();
   }, []);
 
   useEffect(() => {
@@ -46,25 +48,28 @@ const Auto = () => {
 
     currencyData
       .filter((value) => value.currency_symbol === 'USD')
-      .map((currData) => {
+      .forEach((currData) => {
         const jsonify = (res) => res.json();
         try {
-          const results = fetch(
-            `https://api.polygon.io/v2/snapshot/locale/global/markets/crypto/tickers/X:${currData.base_currency_symbol}USD?&` +
-              new URLSearchParams({
-                apiKey: process.env.REACT_APP_APIKEY,
-              })
-          )
-            .then(jsonify)
+          const FilterAvailableCryptos = () => {
+            fetch(
+              `https://api.polygon.io/v2/snapshot/locale/global/markets/crypto/tickers/X:${currData.base_currency_symbol}USD?&` +
+                new URLSearchParams({
+                  apiKey: process.env.REACT_APP_APIKEY,
+                })
+            )
+              .then(jsonify)
 
-            .then((data) => {
-              data.status === 'OK' &&
-                processData.push({
-                  base_currency_symbol: currData.base_currency_symbol,
-                  base_currency_name: currData.base_currency_name,
-                });
-            });
-          setOptions(processData);
+              .then((data) => {
+                data.status === 'OK' &&
+                  processData.push({
+                    base_currency_symbol: currData.base_currency_symbol,
+                    base_currency_name: currData.base_currency_name,
+                  });
+              });
+            setOptions(processData);
+          };
+          FilterAvailableCryptos();
         } catch (err) {
           console.log(err);
         }
