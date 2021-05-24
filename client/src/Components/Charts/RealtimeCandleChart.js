@@ -6,6 +6,7 @@ const RealtimeCandleChart = ({ cryptoTickers }) => {
   var CanvasJSStockChart = CanvasJSReact.CanvasJSStockChart;
   const cryptoListDetails = useSelector((state) => state.cryptoListDetails);
   const { loading, crypto } = cryptoListDetails;
+  const [connected, setConnected] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [dataOut, setDataOut] = useState([]);
   const [rangeChangedTriggered, setRangeChangedTriggered] = useState(false);
@@ -20,20 +21,27 @@ const RealtimeCandleChart = ({ cryptoTickers }) => {
   var vVal;
 
   useEffect(() => {
-    ws.current = new WebSocket('wss://socket.polygon.io/crypto');
+    const wsconnect = () => {
+      ws.current = new WebSocket('wss://socket.polygon.io/crypto');
 
-    ws.current.onopen = async () => {
-      const auth_data = `{"action":"auth","params":"${process.env.REACT_APP_APIKEY}"}`;
-      await ws.current.send(auth_data);
+      ws.current.onopen = async () => {
+        const auth_data = `{"action":"auth","params":"${process.env.REACT_APP_APIKEY}"}`;
+        await ws.current.send(auth_data);
+        setConnected(true);
+      };
     };
 
+    wsconnect();
+
     return () => {
+      setConnected(false);
       ws.current.close();
     };
   }, []);
 
   useEffect(() => {
-    if (!ws.current) return;
+    if (!ws.current || !connected) return;
+
     let isCancelled = false;
     const runAsync = async () => {
       try {
@@ -88,7 +96,7 @@ const RealtimeCandleChart = ({ cryptoTickers }) => {
         unsubscribe();
       }
     };
-  }, [crypto, loading]);
+  }, [crypto, loading, connected]);
 
   useEffect(() => {
     updateChart(dataOut);
