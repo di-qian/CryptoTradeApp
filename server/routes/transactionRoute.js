@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { makeDepositByEmail } = require('../controllers/transactionController');
+const {
+  makeDepositByEmail,
+  validateDeposit,
+} = require('../controllers/transactionController');
 
 const { protect } = require('../middleware/authMiddleware.js');
 

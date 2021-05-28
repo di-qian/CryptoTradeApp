@@ -8,6 +8,7 @@ const Auto = () => {
   const [display, setDisplay] = useState(false);
   const [options, setOptions] = useState([]);
   const [search, setSearch] = useState('');
+  const [disableSearch, setDisableSearch] = useState(true);
   const wrapperRef = useRef(null);
 
   const cryptoListDetails = useSelector((state) => state.cryptoListDetails);
@@ -15,8 +16,8 @@ const Auto = () => {
 
   useEffect(() => {
     const jsonify = (res) => res.json();
-    const getAllCryptoTickers = () => {
-      fetch(
+    const getAllCryptoTickers = async () => {
+      await fetch(
         'https://api.polygon.io/v3/reference/tickers?market=crypto&active=true&sort=ticker&order=asc&limit=1000&' +
           new URLSearchParams({
             apiKey: process.env.REACT_APP_APIKEY,
@@ -51,9 +52,9 @@ const Auto = () => {
       .forEach((currData) => {
         const jsonify = (res) => res.json();
         try {
-          const FilterAvailableCryptos = () => {
-            fetch(
-              `https://api.polygon.io/v2/snapshot/locale/global/markets/crypto/tickers/X:${currData.base_currency_symbol}USD?&` +
+          const FilterAvailableCryptos = async () => {
+            await fetch(
+              `https://api.polygon.io/v2/aggs/ticker/X:${currData.base_currency_symbol}USD/prev?unadjusted=true&` +
                 new URLSearchParams({
                   apiKey: process.env.REACT_APP_APIKEY,
                 })
@@ -61,11 +62,53 @@ const Auto = () => {
               .then(jsonify)
 
               .then((data) => {
-                data.status === 'OK' &&
-                  processData.push({
-                    base_currency_symbol: currData.base_currency_symbol,
-                    base_currency_name: currData.base_currency_name,
-                  });
+                if (data.resultsCount === 1) {
+                  fetch(
+                    `https://api.polygon.io/v1/last/crypto/${currData.base_currency_symbol}/USD?&` +
+                      new URLSearchParams({
+                        apiKey: process.env.REACT_APP_APIKEY,
+                      })
+                  )
+                    .then(jsonify)
+                    .then((data) => {
+                      if (data.status === 'success') {
+                        var now = new Date();
+                        var startOfDay = new Date(
+                          now.getFullYear(),
+                          now.getMonth(),
+                          now.getDate()
+                        );
+
+                        var endOfDay = new Date(
+                          new Date(
+                            now.getFullYear(),
+                            now.getMonth(),
+                            now.getDate() + 1
+                          ) - 1
+                        );
+
+                        var startOfDayTimestamp = startOfDay.valueOf();
+                        var endOfDayTimestamp = endOfDay.valueOf();
+
+                        fetch(
+                          `https://api.polygon.io/v2/aggs/ticker/X:${currData.base_currency_symbol}USD/range/1/minute/${startOfDayTimestamp}/${endOfDayTimestamp}?unadjusted=true&sort=asc&limit=1440&` +
+                            new URLSearchParams({
+                              apiKey: process.env.REACT_APP_APIKEY,
+                            })
+                        )
+                          .then(jsonify)
+                          .then((data) => {
+                            data.resultsCount >
+                              diff_minutes(now, startOfDay) / 2 &&
+                              processData.push({
+                                base_currency_symbol:
+                                  currData.base_currency_symbol,
+                                base_currency_name: currData.base_currency_name,
+                              });
+                          });
+                      }
+                    });
+                }
               });
             setOptions(processData);
           };
@@ -76,6 +119,12 @@ const Auto = () => {
       });
   };
 
+  const diff_minutes = (dt1, now) => {
+    var diff = (now.getTime() - dt1.getTime()) / 1000;
+    diff /= 60;
+    return Math.abs(Math.round(diff));
+  };
+
   const handleClickOutside = (event) => {
     const { current: wrap } = wrapperRef;
     if (wrap && !wrap.contains(event.target)) {
@@ -84,13 +133,35 @@ const Auto = () => {
   };
 
   const updateSearchList = (cryptoName) => {
-    setSearch(cryptoName);
+    if (
+      options.filter(
+        (value) => value.base_currency_symbol === cryptoName.toUpperCase()
+      ).length === 1
+    ) {
+      setDisableSearch(false);
+    } else {
+      setDisableSearch(true);
+    }
+
+    setSearch(cryptoName.toUpperCase());
     setDisplay(false);
   };
 
   const showSearchBar = (event) => {
     if (event.target.value !== '') {
-      setSearch(event.target.value);
+      setSearch(event.target.value.toUpperCase());
+
+      if (
+        options.filter(
+          (value) =>
+            value.base_currency_symbol === event.target.value.toUpperCase()
+        ).length === 1
+      ) {
+        setDisableSearch(false);
+      } else {
+        setDisableSearch(true);
+      }
+
       if (!display) {
         setDisplay(true);
       }
@@ -120,7 +191,7 @@ const Auto = () => {
             <Button
               variant="outline-secondary"
               onClick={() => clearInput()}
-              disabled={!search}
+              disabled={!search || disableSearch}
             >
               <i className="fa fa-search fa-xs" aria-hidden="true" />
             </Button>

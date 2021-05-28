@@ -73,14 +73,14 @@ const CryptoPage = ({ history, match }) => {
       try {
         const dataFetch = () => {
           fetch(
-            `https://api.polygon.io/v2/snapshot/locale/global/markets/crypto/tickers?tickers=${tempQuery}&` +
+            `https://api.polygon.io/v2/aggs/ticker/${tempQuery}/prev?unadjusted=true&` +
               new URLSearchParams({
                 apiKey: process.env.REACT_APP_APIKEY,
               })
           )
             .then(jsonify)
             .then((data) => {
-              processCurrData(data.tickers);
+              processCurrData(data.results);
             });
         };
         dataFetch();
@@ -92,7 +92,7 @@ const CryptoPage = ({ history, match }) => {
     const processCurrData = (curr_DataSet) => {
       var processData;
       curr_DataSet.forEach((currData) => {
-        processData = { o: currData.prevDay.c };
+        processData = { o: currData.o };
       });
 
       setOpenPrice(processData);

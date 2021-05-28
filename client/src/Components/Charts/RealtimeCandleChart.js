@@ -34,7 +34,6 @@ const RealtimeCandleChart = ({ cryptoTickers }) => {
     wsconnect();
 
     return () => {
-      setConnected(false);
       ws.current.close();
     };
   }, []);
@@ -47,7 +46,7 @@ const RealtimeCandleChart = ({ cryptoTickers }) => {
       try {
         if (!isCancelled) {
           if (crypto) {
-            const ticker_currency = crypto.asset_ticker + '-' + 'USD';
+            const ticker_currency = `${crypto.asset_ticker}-USD`;
             const request_data = `{"action":"subscribe", "params":"XA.${ticker_currency}"}`;
             await ws.current.send(request_data);
           }
@@ -83,10 +82,10 @@ const RealtimeCandleChart = ({ cryptoTickers }) => {
     return () => {
       if (crypto) {
         const unsubscribe = async () => {
-          console.log('candlestick chart websocket unmounted');
-          const ticker_currency = crypto.asset_ticker + '-' + 'USD';
+          const ticker_currency = `${crypto.asset_ticker}-USD`;
           const request_data = `{"action":"unsubscribe", "params":"XA.${ticker_currency}"}`;
           await ws.current.send(request_data);
+
           setDataOut([]);
           setDatapoint1([]);
           setDatapoint2([]);
@@ -96,10 +95,12 @@ const RealtimeCandleChart = ({ cryptoTickers }) => {
         unsubscribe();
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [crypto, loading, connected]);
 
   useEffect(() => {
     updateChart(dataOut);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataOut]);
 
   const getInitData = () => {
@@ -213,7 +214,7 @@ const RealtimeCandleChart = ({ cryptoTickers }) => {
           {
             name: 'Price (in USD)',
             xValueType: 'dateTime',
-            xValueFormatString: 'H mm',
+            xValueFormatString: 'H:mm',
             yValueFormatString: '$#,###.##',
             type: 'candlestick',
             dataPoints: datapoint1,
@@ -230,7 +231,7 @@ const RealtimeCandleChart = ({ cryptoTickers }) => {
           {
             name: 'Volume',
             xValueType: 'dateTime',
-            xValueFormatString: 'H mm',
+            xValueFormatString: 'H:mm',
             yValueFormatString: '$#,###.##',
             type: 'column',
             dataPoints: datapoint2,
@@ -251,12 +252,8 @@ const RealtimeCandleChart = ({ cryptoTickers }) => {
     },
   };
 
-  const printName = () => {
-    //console.log(datapoint1);
-  };
   return (
     <div>
-      {printName()}
       {!isLoaded ? (
         <h3>Please wait, loading...</h3>
       ) : (

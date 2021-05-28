@@ -33,7 +33,7 @@ export const login = (email, password) => async (dispatch) => {
       payload: data,
     });
 
-    localStorage.setItem('userInfo', JSON.stringify(data));
+    sessionStorage.setItem('userInfo', JSON.stringify(data));
   } catch (error) {
     dispatch({
       type: USER_LOGIN_FAIL,
@@ -50,7 +50,7 @@ export const login = (email, password) => async (dispatch) => {
 };
 
 export const logout = () => (dispatch) => {
-  localStorage.removeItem('userInfo');
+  sessionStorage.removeItem('userInfo');
 
   dispatch({ type: USER_LOGOUT });
 
@@ -58,59 +58,58 @@ export const logout = () => (dispatch) => {
   document.location.href = '/';
 };
 
-export const register = (name, email, password, confirmPassword) => async (
-  dispatch
-) => {
-  try {
-    dispatch({
-      type: USER_REGISTER_REQUEST,
-    });
+export const register =
+  (name, email, password, confirmPassword) => async (dispatch) => {
+    try {
+      dispatch({
+        type: USER_REGISTER_REQUEST,
+      });
 
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
 
-    const { data } = await axios.post(
-      '/api/v1/users',
-      { name, email, password, confirmPassword },
-      config
-    );
+      const { data } = await axios.post(
+        '/api/v1/users',
+        { name, email, password, confirmPassword },
+        config
+      );
 
-    dispatch({
-      type: USER_REGISTER_SUCCESS,
-      payload: data,
-    });
+      dispatch({
+        type: USER_REGISTER_SUCCESS,
+        payload: data,
+      });
 
-    dispatch({
-      type: USER_LOGIN_SUCCESS,
-      payload: data,
-    });
+      dispatch({
+        type: USER_LOGIN_SUCCESS,
+        payload: data,
+      });
 
-    localStorage.setItem('userInfo', JSON.stringify(data));
+      sessionStorage.setItem('userInfo', JSON.stringify(data));
 
-    let newCrypto = {
-      user_id: data._id,
-      owner_email: data.email,
-      asset_name: 'Cash',
-      asset_ticker: 'Cash',
-      quantity: 0,
-      purchase_price: 1,
-    };
+      let newCrypto = {
+        user_id: data._id,
+        owner_email: data.email,
+        asset_name: 'Cash',
+        asset_ticker: 'Cash',
+        quantity: 0,
+        purchase_price: 1,
+      };
 
-    await dispatch(addCrypto(newCrypto));
-  } catch (error) {
-    // dispatch({
-    //   type: USER_REGISTER_FAIL,
-    //   payload:
-    //     error.response && error.response.data.message
-    //       ? error.response.data.message
-    //       : error.message,
-    // });
-    dispatch({
-      type: USER_REGISTER_FAIL,
-      payload: error.response.data,
-    });
-  }
-};
+      await dispatch(addCrypto(newCrypto));
+    } catch (error) {
+      // dispatch({
+      //   type: USER_REGISTER_FAIL,
+      //   payload:
+      //     error.response && error.response.data.message
+      //       ? error.response.data.message
+      //       : error.message,
+      // });
+      dispatch({
+        type: USER_REGISTER_FAIL,
+        payload: error.response.data,
+      });
+    }
+  };

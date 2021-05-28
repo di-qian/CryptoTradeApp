@@ -22,11 +22,6 @@ const getAssets = asyncHandler(async (req, res) => {
 
 const getAssetsById = asyncHandler(async (req, res) => {
   try {
-    // const results = await db.query(
-    //   'SELECT * from profolio INNER JOIN cryptoLibrary ON profolio.asset_name = cryptoLibrary.asset_name AND cryptoLibrary.ticker = $1',
-    //   [req.params.id]
-    // );
-
     const results = await db.query(
       'SELECT * from profolio WHERE user_id = $2 AND profolio.asset_ticker = $1',
       [req.params.id, req.query.user_id]
@@ -96,7 +91,6 @@ const changeAssetsById = asyncHandler(async (req, res) => {
 
 const addAssetsById = asyncHandler(async (req, res) => {
   try {
-    console.log(req.body);
     const results = await db.query(
       'INSERT INTO profolio(user_id, owner_email, asset_name, asset_ticker, quantity, purchase_price) VALUES ($1, $2, $3, $4, $5, $6) returning *',
       [

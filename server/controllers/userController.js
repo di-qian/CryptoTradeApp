@@ -26,8 +26,6 @@ const authUser = asyncHandler(async (req, res) => {
       user.rows[0].user_password
     );
 
-    console.log(validPassword);
-
     if (validPassword) {
       res.json({
         _id: user.rows[0].user_id,

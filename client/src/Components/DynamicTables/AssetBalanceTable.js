@@ -48,6 +48,7 @@ const AssetBalanceTable = ({ total_worth_v, latestData }) => {
         total_difference += quantity * (curPrice - purchase_price);
         setTotal_difference_v(total_difference);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cryptos, latestData]);
 
   useEffect(() => {
@@ -82,6 +83,7 @@ const AssetBalanceTable = ({ total_worth_v, latestData }) => {
         total_difference += quantity * (curPrice - purchase_price);
         setTotal_difference_v(total_difference);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cryptos]);
 
   const retrieveCashInfo = () => {

@@ -10,23 +10,24 @@ const db = require('../db');
 // @access  Private
 const makeDepositByEmail = asyncHandler(async (req, res) => {
   try {
+    const { cashDeposit } = req.body;
+
     const { id } = req.body.token;
-    const cashDeposit = Number(req.body.cashDeposit);
+    const cashDeposited = Number(cashDeposit);
     const charge = await stripe.charges.create({
-      amount: cashDeposit * 100,
+      amount: cashDeposited * 100,
       currency: 'usd',
       source: id,
       description: `Making a deposit of $ ${cashDeposit}`,
     });
 
-    const cash = req.body.cash + cashDeposit;
-    console.log(req.body);
+    const cash = req.body.cash + cashDeposited;
+
     const results = await db.query(
       'UPDATE profolio SET quantity=$3 WHERE user_id = $1 AND asset_name=$2 returning *',
       [req.body.user_id, req.body.asset_name, cash]
     );
 
-    console.log(results.rows);
     res.status(200).json({
       status: 'success',
       data: results.rows,
