@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col } from 'react-bootstrap';
+import placeholderimg from '../img/placeholder-image.png';
 
 const NewsList = () => {
   const [news, setNews] = useState([]);
@@ -77,8 +78,8 @@ const NewsList = () => {
                 >
                   <img
                     className="card-img mr-3"
-                    src={newitem.thumbnail}
-                    alt="Generic placeholder"
+                    src={newitem.thumbnail ? newitem.thumbnail : placeholderimg}
+                    alt="placeholder image"
                   />
                 </a>
               </Col>
@@ -95,7 +96,10 @@ const NewsList = () => {
                   <div>{getNewsDate(`${newitem.time}`)}</div>
                   <div className="card-separator">|</div>
                   <div className="card-author">
-                    by {titleCase(`${newitem.author.name}`)}
+                    by{' '}
+                    {newitem.author.name
+                      ? titleCase(`${newitem.author.name}`)
+                      : 'Editorial Board'}
                   </div>
                 </div>
                 <p className="card-text">{newitem.preview}</p>
