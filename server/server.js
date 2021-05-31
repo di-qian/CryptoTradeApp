@@ -1,5 +1,5 @@
 require('dotenv').config();
-import path from 'path';
+const path = require('path');
 const express = require('express');
 const app = express();
 const cryptoRoutes = require('./routes/cryptoRoutes');
@@ -17,10 +17,10 @@ app.use('/api/v1/transactions', transactionRoutes);
 // );
 
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '/client/build')));
+  app.use(express.static(path.join(__dirname, '../client/build')));
 
   app.get('*', (req, res) =>
-    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
+    res.sendFile(path.resolve(__dirname, '../client', 'build', 'index.html'))
   );
 } else {
   app.get('/', (req, res) => {
@@ -31,7 +31,7 @@ if (process.env.NODE_ENV === 'production') {
 const PORT = process.env.PORT || 3001;
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client/build/index.html'));
+  res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
 
 app.listen(PORT, () => {
