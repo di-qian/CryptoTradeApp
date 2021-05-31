@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { Container, Row, Col } from 'react-bootstrap';
 import { listCryptos } from '../actions/cryptoActions';
 import DepositForm from '../Components/DepositForm';
+import TesterMessageToast from '../Components/TesterMessageToast';
 
 const DepositPage = ({ history }) => {
   const dispatch = useDispatch();
@@ -48,6 +49,11 @@ const DepositPage = ({ history }) => {
               Available Cash in USD: ${cashTotal}
             </p>
             <DepositForm makeDepositStatusToast={makeDepositStatusToast} />
+          </Col>
+        </Row>
+        <Row className="mt-5 d-flex justify-content-center">
+          <Col xs="auto" sm="auto" md="auto">
+            <TesterMessageToast />
           </Col>
         </Row>
       </Container>

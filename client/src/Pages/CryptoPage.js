@@ -28,6 +28,7 @@ const CryptoPage = ({ history, match }) => {
   }, [dispatch, history, userInfo]);
 
   useEffect(() => {
+    const abortController = new AbortController();
     const ticker = 'X:' + match.params.id + 'USD';
     const jsonify = (res) => res.json();
     try {
@@ -36,7 +37,8 @@ const CryptoPage = ({ history, match }) => {
           `https://api.polygon.io/v3/reference/tickers?ticker=${ticker}&market=crypto&active=true&sort=ticker&order=asc&limit=1000&` +
             new URLSearchParams({
               apiKey: process.env.REACT_APP_APIKEY,
-            })
+            }),
+          { signal: abortController.signal }
         )
           .then(jsonify)
           .then((data) => {
@@ -58,6 +60,10 @@ const CryptoPage = ({ history, match }) => {
             processTickerData(data.results[0]);
           });
       results();
+
+      return () => {
+        abortController.abort();
+      };
     } catch (err) {
       console.log(err);
     }

@@ -45,7 +45,6 @@ const BuyForm = (props) => {
   useEffect(() => {
     if (detail_update_success && cryptos_update_success) {
       buyorderStatusToast('Buy Order Completed!');
-      //toast.success('Buy Order Completed!');
       dispatch({ type: CRYPTO_UPDATE_DETAILS_RESET });
       dispatch({ type: CRYPTO_UPDATE_RESET });
     }
@@ -93,6 +92,7 @@ const BuyForm = (props) => {
       quantity: buyAmount / cryptoPrice,
       purchase_price: cryptoPrice,
     };
+
     await dispatch(addCrypto(newCrypto));
 
     await dispatch(listCryptosDetails(crypto.asset_ticker, userInfo._id));
@@ -187,8 +187,6 @@ const BuyForm = (props) => {
             />
           </Col>
         </Form.Group>
-
-        <br />
 
         <Alert
           variant={'danger'}

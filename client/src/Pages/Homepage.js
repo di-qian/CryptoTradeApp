@@ -1,15 +1,17 @@
 import React, { useEffect } from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { USER_LOGIN_ERRORS_RESET } from '../constants/userConstants';
+import TopGainerTable from '../Components/DynamicTables/TopGainerTable';
+import TopLoserTable from '../Components/DynamicTables/TopLoserTable';
+import NewsList from '../Components/NewsList';
 
 const Homepage = ({ location, history }) => {
   const dispatch = useDispatch();
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
-
-  //const [setLatestData] = useState([]);
 
   const redirect = location.search
     ? location.search.split('=')[1]
@@ -23,39 +25,25 @@ const Homepage = ({ location, history }) => {
     }
   }, [history, userInfo, redirect, dispatch]);
 
-  // useEffect(() => {
-  //   const jsonify = (res) => res.json();
-  //   try {
-  //     const results = fetch(
-  //       'https://api.polygon.io/v2/snapshot/locale/global/markets/crypto/gainers?' +
-  //         new URLSearchParams({
-  //           apiKey: process.env.REACT_APP_APIKEY,
-  //         })
-  //     )
-  //       .then(jsonify)
-  //       .then((data) => {
-  //         processCurrData(data.tickers);
-  //       });
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // }, [dispatch]);
-
-  // const processCurrData = (curr_DataSet) => {
-  //   let processData = [];
-  //   curr_DataSet.map((currData) => {
-  //     processData.push({
-  //       o: currData.todaysChange,
-  //       p: currData.todaysChangePerc,
-  //       ticker: currData.ticker,
-  //       t: currData.updated,
-  //     });
-  //   });
-
-  //   setLatestData(processData);
-  // };
-
-  return <div>This is Homepage</div>;
+  return (
+    <>
+      <Container>
+        <Row className="mb-4">
+          <Col>
+            <TopGainerTable />
+          </Col>
+          <Col>
+            <TopLoserTable />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <NewsList />
+          </Col>
+        </Row>
+      </Container>
+    </>
+  );
 };
 
 export default Homepage;

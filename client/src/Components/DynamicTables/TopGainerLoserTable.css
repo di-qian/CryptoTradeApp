@@ -1,0 +1,44 @@
+th {
+  font-size: 14px;
+}
+
+.ctr {
+  align-items: center;
+  vertical-align: middle;
+}
+
+.gain-bd-text {
+  color: rgb(45, 119, 45);
+  font-weight: 500;
+  font-size: 13px;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.lose-bd-text {
+  color: red;
+  font-weight: 500;
+  font-size: 13px;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.display-percent {
+  column-width: 100px;
+}
+
+@media screen and (max-width: 767px) {
+  .display-volume {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 361px) {
+  .display-volume {
+    display: none;
+  }
+
+  .display-name {
+    display: none;
+  }
+}

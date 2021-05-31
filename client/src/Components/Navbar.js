@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Navbar, Nav, Form, Button } from 'react-bootstrap';
-
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { LinkContainer } from 'react-router-bootstrap';
 import './Navbar.css';
@@ -17,6 +17,10 @@ const NavBar = () => {
     dispatch(logout());
   };
 
+  const [sidebar, setSidebar] = useState(false);
+
+  const showSidebar = () => setSidebar(!sidebar);
+
   return (
     <>
       <Navbar bg="light" expand="md" className="mb-3 navbar">
@@ -29,7 +33,7 @@ const NavBar = () => {
                   : 'fas fa-rocket nav-brand-lgscreen'
               }
             >
-              COINx
+              {} TOKENx
             </i>
 
             <i
@@ -38,7 +42,9 @@ const NavBar = () => {
                   ? 'fas fa-rocket fa-sm navbar-icon nav-brand-smscreen'
                   : 'fas fa-rocket fa-sm nav-brand-smscreen'
               }
-            />
+            >
+              {userInfo ? '' : ' TOKENx'}
+            </i>
           </Navbar.Brand>
         </LinkContainer>
         {userInfo && (
@@ -46,57 +52,99 @@ const NavBar = () => {
             <SearchBar />
           </Form>
         )}
-        <Navbar.Toggle
-          aria-controls="basic-navbar-nav"
-          className="navbar-menu-btn"
-        >
-          <span>
-            <i className="fas fa-bars" color="#20FC8F" size="2x" />
+        <Navbar.Toggle className="navbar-menu-btn">
+          <span onClick={showSidebar}>
+            <i
+              className="fas fa-bars hamburger-btn"
+              color="#20FC8F"
+              size="2x"
+            />
           </span>
         </Navbar.Toggle>
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ml-auto">
+
+        <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
+          <div className="nav-menu-items" onClick={showSidebar}>
+            <div className="navbar-toggle">
+              <Link to="#" className="menu-bars"></Link>
+            </div>
             {userInfo ? (
               <>
-                <LinkContainer to={userInfo ? '/auth/deposit' : '/'}>
-                  <Nav.Link>
-                    <Button variant="warning" className="navbarbtn">
-                      Deposit
-                    </Button>
-                  </Nav.Link>
-                </LinkContainer>
-
-                <Nav.Link>
-                  <Button
-                    variant="warning"
-                    className="navbarbtn"
-                    onClick={logoutHandler}
-                  >
-                    Log out
-                  </Button>
-                </Nav.Link>
+                <div className="nav-text">
+                  <Link to={userInfo ? '/auth/dashboard' : '/'}>
+                    <span className="nav-text-item">DASHBOARD</span>
+                  </Link>
+                </div>
+                <div className="nav-text">
+                  <Link to={userInfo ? '/auth/deposit' : '/'}>
+                    <span className="nav-text-item">DEPOSIT</span>
+                  </Link>
+                </div>
+                <div className="nav-text">
+                  <Link to="#">
+                    <span className="nav-text-item" onClick={logoutHandler}>
+                      LOG OUT
+                    </span>
+                  </Link>
+                </div>
               </>
             ) : (
               <>
-                <LinkContainer to="/login">
-                  <Nav.Link>
-                    <Button variant="warning" className="navbarbtn">
-                      Log in
-                    </Button>
-                  </Nav.Link>
-                </LinkContainer>
-
-                <LinkContainer to="/register">
-                  <Nav.Link>
-                    <Button variant="warning" className="navbarbtn">
-                      Sign up
-                    </Button>
-                  </Nav.Link>
-                </LinkContainer>
+                <div className="nav-text">
+                  <Link to="/login">
+                    <span className="nav-text-item">LOG IN</span>
+                  </Link>
+                </div>
+                <div className="nav-text">
+                  <Link to="/register">
+                    <span className="nav-text-item">REGISTER</span>
+                  </Link>
+                </div>
               </>
             )}
-          </Nav>
-        </Navbar.Collapse>
+          </div>
+        </nav>
+
+        <Nav className="ml-auto btNavbar">
+          {userInfo ? (
+            <>
+              <LinkContainer to={userInfo ? '/auth/deposit' : '/'}>
+                <Nav.Link>
+                  <Button variant="warning" className="navbarbtn">
+                    Deposit
+                  </Button>
+                </Nav.Link>
+              </LinkContainer>
+
+              <Nav.Link>
+                <Button
+                  variant="warning"
+                  className="navbarbtn"
+                  onClick={logoutHandler}
+                >
+                  Log out
+                </Button>
+              </Nav.Link>
+            </>
+          ) : (
+            <>
+              <LinkContainer to="/login">
+                <Nav.Link>
+                  <Button variant="warning" className="navbarbtn">
+                    Log in
+                  </Button>
+                </Nav.Link>
+              </LinkContainer>
+
+              <LinkContainer to="/register">
+                <Nav.Link>
+                  <Button variant="warning" className="navbarbtn">
+                    Sign up
+                  </Button>
+                </Nav.Link>
+              </LinkContainer>
+            </>
+          )}
+        </Nav>
       </Navbar>
     </>
   );

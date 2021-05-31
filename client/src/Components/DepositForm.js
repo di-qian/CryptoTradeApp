@@ -97,11 +97,7 @@ const DepositForm = (props) => {
             }
             stripeKey={process.env.REACT_APP_STRIPE_KEY}
           >
-            <Button
-              variant="primary"
-              // disabled={depositBtnDisabled}
-              onClick={validateDeposit}
-            >
+            <Button variant="primary" onClick={validateDeposit}>
               DEPOSIT
             </Button>
           </StripeCheckout>

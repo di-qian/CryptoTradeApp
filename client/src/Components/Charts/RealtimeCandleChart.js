@@ -67,8 +67,8 @@ const RealtimeCandleChart = ({ cryptoTickers }) => {
               };
               setDataOut((curData) => [...curData, dataFr]);
             }
-            obj[0] &&
-              console.log(obj[0].ev === 'XA' ? dataOut : obj[0].message);
+            // obj[0] &&
+            //   console.log(obj[0].ev === 'XA' ? dataOut : obj[0].message);
           };
         }
       } catch (e) {

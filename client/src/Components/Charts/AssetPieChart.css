@@ -1,8 +1,6 @@
 .stats__container {
   flex-direction: column;
   flex: 1;
-  /* min-width: 360px;
-  max-width: 360px; */
   height: auto;
   background-color: #f5f5f5;
   border-radius: 5px;

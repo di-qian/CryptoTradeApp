@@ -8,6 +8,7 @@ import {
   USER_REGISTER_REQUEST,
   USER_REGISTER_SUCCESS,
 } from '../constants/userConstants';
+import { CRYPTO_CREATE_RESET } from '../constants/cryptoConstants';
 import { addCrypto } from './cryptoActions';
 
 export const login = (email, password) => async (dispatch) => {
@@ -99,6 +100,10 @@ export const register =
       };
 
       await dispatch(addCrypto(newCrypto));
+
+      await dispatch({
+        type: CRYPTO_CREATE_RESET,
+      });
     } catch (error) {
       // dispatch({
       //   type: USER_REGISTER_FAIL,
