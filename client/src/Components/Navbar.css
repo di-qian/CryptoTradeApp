@@ -10,6 +10,16 @@ navbar-logo {
   text-decoration: none;
 }
 
+.taglineloggedin {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.taglineloggedout {
+  font-size: 12px;
+  font-weight: 500;
+}
+
 .navbar-menu-btn {
   margin-left: 1px;
 
@@ -111,6 +121,15 @@ navbar-logo {
 
 @media screen and (max-width: 450px) {
   .nav-brand-lgscreen {
+    display: none;
+    left: 0;
+    top: 0;
+    margin-left: 0;
+  }
+}
+
+@media screen and (max-width: 590px) {
+  .taglineloggedin {
     display: none;
     left: 0;
     top: 0;

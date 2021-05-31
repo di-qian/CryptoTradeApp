@@ -26,16 +26,20 @@ const NavBar = () => {
       <Navbar bg="light" expand="md" className="mb-3 navbar">
         <LinkContainer to={userInfo ? '/auth/dashboard' : '/'}>
           <Navbar.Brand className="nav-brand">
-            <i
-              className={
-                userInfo
-                  ? 'fas fa-rocket navbar-icon nav-brand-lgscreen'
-                  : 'fas fa-rocket nav-brand-lgscreen'
-              }
-            >
-              {} TOKENx
-            </i>
-
+            <div>
+              <i
+                className={
+                  userInfo
+                    ? 'fas fa-rocket navbar-icon nav-brand-lgscreen'
+                    : 'fas fa-rocket nav-brand-lgscreen'
+                }
+              >
+                {} COINx
+              </i>
+            </div>
+            <div className={userInfo ? 'taglineloggedin' : 'taglineloggedout'}>
+              A better way to paper trade cryptocurrencies
+            </div>
             <i
               className={
                 userInfo
@@ -43,7 +47,7 @@ const NavBar = () => {
                   : 'fas fa-rocket fa-sm nav-brand-smscreen'
               }
             >
-              {userInfo ? '' : ' TOKENx'}
+              {userInfo ? '' : ' COINx'}
             </i>
           </Navbar.Brand>
         </LinkContainer>
