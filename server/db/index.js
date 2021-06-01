@@ -10,12 +10,17 @@ const devConfig = {
 };
 
 const proConfig = {
-  connectionString: process.env.DATABASE_URL, // heroku addons
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 };
 
 const pool = new Pool(
   process.env.NODE_ENV === 'production' ? proConfig : devConfig
 );
+
+pool.connect();
 
 module.exports = {
   query: (text, params) => pool.query(text, params),

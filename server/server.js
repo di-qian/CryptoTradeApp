@@ -12,10 +12,6 @@ app.use('/api/v1/cryptos', cryptoRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/transactions', transactionRoutes);
 
-// app.get('/api/config/paypal', (req, res) =>
-//   res.send(process.env.PAYPAL_CLIENT_ID)
-// );
-
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/build')));
 
@@ -30,9 +26,9 @@ if (process.env.NODE_ENV === 'production') {
 
 const PORT = process.env.PORT || 3001;
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/build/index.html'));
-});
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../client/build/index.html'));
+// });
 
 app.listen(PORT, () => {
   console.log(`server is running in ${process.env.NODE_ENV} on port ${PORT}`);

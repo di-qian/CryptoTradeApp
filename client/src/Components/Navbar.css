@@ -110,6 +110,15 @@ navbar-logo {
   margin-left: 16px;
 } */
 
+@media screen and (max-width: 451px) {
+  .taglineloggedout {
+    display: none;
+    left: 0;
+    top: 0;
+    margin-left: 0;
+  }
+}
+
 @media screen and (min-width: 451px) {
   .nav-brand-smscreen {
     display: none;
