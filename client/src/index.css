@@ -91,6 +91,10 @@ hr.solid {
   width: 330px;
 }
 
+.toastwidthfrontpage {
+  width: 190px;
+}
+
 .toasttext {
   justify-content: center;
   padding-left: 12px;
