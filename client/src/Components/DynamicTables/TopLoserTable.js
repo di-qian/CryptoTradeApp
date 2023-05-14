@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Table } from 'react-bootstrap';
-import './TopGainerLoserTable.css';
+import React, { useState, useEffect } from "react";
+import { Table } from "react-bootstrap";
+import "./TopGainerLoserTable.css";
 
 const TopLoserTable = () => {
   const [loserData, setLoserData] = useState([]);
@@ -14,25 +14,27 @@ const TopLoserTable = () => {
   }, [loserData]);
 
   useEffect(() => {
-    const jsonify = (res) => res.json();
-    try {
-      const getLosers = async () => {
-        await fetch(
-          'https://api.polygon.io/v2/snapshot/locale/global/markets/crypto/losers?' +
+    const getLosers = async () => {
+      try {
+        const response = await fetch(
+          "https://api.polygon.io/v2/snapshot/locale/global/markets/crypto/losers?" +
             new URLSearchParams({
               apiKey: process.env.REACT_APP_APIKEY,
             })
-        )
-          .then(jsonify)
-          .then((data) => {
-            processCurrData(data.tickers.slice(0, 5));
-          });
-      };
+        );
 
-      getLosers();
-    } catch (err) {
-      console.log(err);
-    }
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const data = await response.json();
+        processCurrData(data.tickers.slice(0, 5));
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    getLosers();
   }, []);
 
   const processCurrData = (curr_DataSet) => {

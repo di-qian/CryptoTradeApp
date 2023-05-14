@@ -1,3 +1,13 @@
+CREATE EXTENSION "uuid-ossp";
+CREATE TABLE users(
+	user_id uuid PRIMARY KEY DEFAULT
+	uuid_generate_v4(),
+	user_name VARCHAR(255) NOT NULL,
+	user_email VARCHAR(255) NOT NULL,
+	user_password VARCHAR(255) NOT NULL,
+	user_created_at TIMESTAMPTZ NOT NULL
+);
+
 CREATE TABLE profolio (
 	user_id uuid NOT NULL,
     owner_email VARCHAR(255) NOT NULL,
@@ -11,20 +21,6 @@ CREATE TABLE profolio (
 	  REFERENCES users(user_id)
 );
 
-
-
-CREATE EXTENSION "uuid-ossp";
-CREATE TABLE users(
-	user_id uuid PRIMARY KEY DEFAULT
-	uuid_generate_v4(),
-	user_name VARCHAR(255) NOT NULL,
-	user_email VARCHAR(255) NOT NULL,
-	user_password VARCHAR(255) NOT NULL,
-	user_created_at TIMESTAMPTZ NOT NULL
-);
-
-
-
-INSERT INTO profolio(id, owner_email, asset_name, quantity, purchase_price, iscrypto) VALUES (1, 'johndoe@gmail.com', 'btc', 0.5, 50000.00, TRUE);
-INSERT INTO profolio(id, owner_email, asset_name, quantity, purchase_price, iscrypto) VALUES (2, 'johndoe@gmail.com', 'cash', 10000, 1.00, FALSE);
+INSERT INTO profolio(user_id, owner_email, asset_name, quantity, purchase_price) VALUES (1, 'johndoe@gmail.com', 'btc', 0.5, 50000.00);
+INSERT INTO profolio(user_id, owner_email, asset_name, quantity, purchase_price) VALUES (2, 'johndoe@gmail.com', 'cash', 10000, 1.00);
 
